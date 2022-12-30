@@ -55,7 +55,7 @@ cache:
 .verify:
   stage: test
   script:
-    - 'mvn $MAVEN_CLI_OPTS verify'
+    - mvn test
   except:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
