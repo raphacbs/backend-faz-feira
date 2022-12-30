@@ -38,23 +38,34 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
     @Override
     public UnitDto create(UnitRequestBody unitRequestBody) {
         logger.info("The create method was called");
-        Unit unit = validateAndConvert(unitRequestBody);
+        final Unit unitToSave = validateAndConvert(unitRequestBody);
         logger.info("Checking if Unit already exists");
-        List<Unit> units = this.unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unit.getDescription(), unit.getInitials());
-        if (!units.isEmpty()) {
-            if (units.stream().anyMatch(x -> x.getInitials().equalsIgnoreCase(unit.getInitials()))) {
-                logger.error("Already exist unit initials {}", unit.getInitials());
+
+        final EnumUnitSearchBehavior enumUnitSearchBehavior = EnumUnitSearchBehavior
+                .find(isNotNull(unitRequestBody.getInitials()),
+                        isNotNull(unitRequestBody.getDescription()));
+        Map<String, Object> params = Params.getDefaultParams();
+        params.put(Params.UNIT_DESCRIPTION, unitRequestBody.getDescription());
+        params.put(Params.UNIT_INITIALS, unitRequestBody.getInitials());
+
+        Page<Unit> unitPage = enumUnitSearchBehavior.getUnitSearchBehavior()
+                .searchPageUnit(unitRepository, params);
+
+        if (!unitPage.getContent().isEmpty()) {
+            if (unitPage.getContent().stream().anyMatch(x -> x.getInitials().equalsIgnoreCase(unitRequestBody.getInitials()))) {
+                logger.error("Already exist unit initials {}", unitRequestBody.getInitials());
                 throw new UnitAlreadyExistException(MessageFormat.format("Already exist unit initials {0}",
-                        unit.getInitials()));
+                        unitRequestBody.getInitials()));
             }
-            if (units.stream().anyMatch(x -> x.getDescription().equalsIgnoreCase(unit.getDescription()))) {
-                logger.error("Already exist unit description {}", unit.getDescription());
+            if (unitPage.getContent().stream().anyMatch(x -> x.getDescription().equalsIgnoreCase(unitRequestBody.getDescription()))) {
+                logger.error("Already exist unit description {}", unitRequestBody.getDescription());
                 throw new UnitAlreadyExistException(MessageFormat.format("Already exist unit description {0} ",
-                        unit.getDescription()));
+                        unitRequestBody.getDescription()));
             }
         }
+
         logger.info("Preparing the object record in the database...");
-        final Unit saved = this.unitRepository.save(unit);
+        final Unit saved = this.unitRepository.save(unitToSave);
         logger.debug("Object saved successfully: {}", saved);
 
         logger.info("Preparing object conversion Unit to UnitDto");
@@ -85,7 +96,7 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
     }
 
     @Override
-    public ResponseList<UnitDto> getByParams( Map<String, Object> params) {
+    public ResponseList<UnitDto> getByParams(Map<String, Object> params) {
         final EnumUnitSearchBehavior enumUnitSearchBehavior = EnumUnitSearchBehavior
                 .find(isNotNull(params.get(Params.UNIT_INITIALS)),
                         isNotNull(params.get(Params.UNIT_DESCRIPTION)));

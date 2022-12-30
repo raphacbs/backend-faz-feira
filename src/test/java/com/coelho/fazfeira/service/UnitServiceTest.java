@@ -14,6 +14,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 
@@ -66,19 +70,21 @@ class UnitServiceTest {
     void givenValidUnitRequestBodyObject_whenSave_thenReturnSavedUnit() {
 
         when(unitRepository.save(any(Unit.class))).thenReturn(unitValid);
-        when(unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unitRequestBodyValid.getDescription(),
-                unitRequestBodyValid.getInitials()))
-                .thenReturn(List.of());
+        when(unitRepository.findByDescriptionIgnoreCaseContainingAndInitialsIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyValid.getDescription()),
+                eq(unitRequestBodyValid.getInitials())))
+                .thenReturn(new PageImpl<Unit>(List.of()));
         final UnitDto saved = unitService.create(UnitRequestBodyBuilder.createValid());
         Assertions.assertNotNull(saved.getId());
     }
 
     @Test
     void givenUnitRequestBodyWithDescriptionAlreadyExist_whenSave_thenReturnException() {
-        when(unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unitRequestBodyDescriptionAlreadyExist.getDescription(),
-                unitRequestBodyDescriptionAlreadyExist.getInitials()))
-                .thenReturn(List.of(UnitBuilder
-                        .createFromUnitRequestBodyWithDescriptionEmpty(unitRequestBodyDescriptionAlreadyExist)));
+        when(unitRepository.findByDescriptionIgnoreCaseContainingAndInitialsIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyDescriptionAlreadyExist.getDescription()),
+                eq(unitRequestBodyDescriptionAlreadyExist.getInitials())))
+                .thenReturn(new PageImpl<Unit>(List.of(UnitBuilder
+                        .createFromUnitRequestBodyWithDescriptionEmpty(unitRequestBodyDescriptionAlreadyExist))));
         Assertions.assertThrowsExactly(UnitAlreadyExistException.class,
                 () -> unitService.create(unitRequestBodyDescriptionAlreadyExist),
                 MessageFormat.format("Already exist unit description {0}",
@@ -88,10 +94,11 @@ class UnitServiceTest {
     @Test
     void givenUnitRequestBodyWithInitialsAlreadyExist_whenSave_thenReturnException() {
         Mockito.mock(InputValidator.class);
-        when(unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unitRequestBodyInitialsAlreadyExist.getDescription(),
-                unitRequestBodyInitialsAlreadyExist.getInitials()))
-                .thenReturn(List.of(UnitBuilder
-                        .createFromUnitRequestBodyWithInitialsEmpty(unitRequestBodyInitialsAlreadyExist)));
+        when(unitRepository.findByDescriptionIgnoreCaseContainingAndInitialsIgnoreCaseContaining(any(Pageable.class),
+                        eq(unitRequestBodyInitialsAlreadyExist.getDescription()),
+                                eq(unitRequestBodyInitialsAlreadyExist.getInitials())))
+                .thenReturn(new PageImpl<Unit>(List.of(UnitBuilder
+                        .createFromUnitRequestBodyWithInitialsEmpty(unitRequestBodyInitialsAlreadyExist))));
 
         UnitAlreadyExistException unitAlreadyExistException = Assertions.assertThrows(UnitAlreadyExistException.class,
                 () -> unitService.create(unitRequestBodyInitialsAlreadyExist));
@@ -127,6 +134,7 @@ class UnitServiceTest {
         final UnitDto saved = unitService.update(UnitRequestBodyBuilder.createValid());
         Assertions.assertNotNull(saved.getId());
     }
+
     @Test
     void givenUnitRequestBodyNotExist_whenUpdate_thenThrowException() {
         String message = MessageFormat.format("The unit with the id: {0} not exist", unitRequestBodyNotExist.getId().toString());
