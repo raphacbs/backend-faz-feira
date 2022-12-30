@@ -21,11 +21,11 @@ cache:
     - .m2/repository
 
 stages:
-  - build
+  - install
   - test
 
 build:
-  stage: prepare
+  stage: install
   script:
     mvn install
 
