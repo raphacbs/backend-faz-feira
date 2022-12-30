@@ -3,26 +3,20 @@ package com.coelho.fazfeira.validation;
 import com.coelho.fazfeira.builder.UnitRequestBodyBuilder;
 import com.coelho.fazfeira.dto.UnitRequestBody;
 import com.coelho.fazfeira.excepitonhandler.ResourceValidationException;
-import com.coelho.fazfeira.excepitonhandler.UnitAlreadyExistException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-
-import java.text.MessageFormat;
-import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class InputValidatorTest {
+class InputValidatorTest {
 
     @InjectMocks
     private InputValidator<UnitRequestBody> inputValidator;

@@ -8,8 +8,7 @@ import java.util.Map;
 
 public class UnitSearchAll implements UnitSearchBehavior{
     @Override
-    public Page<Unit> search(UnitRepository unitRepository, Map<String, Object> params) {
-        Page<Unit> unitPage = unitRepository.findAll(getPageable(params));
-        return unitPage;
+    public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, Object> params) {
+        return unitRepository.findAll(getPageable(params));
     }
 }

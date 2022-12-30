@@ -24,5 +24,5 @@ public interface UnitSearchBehavior {
                 : Sort.by(sortBy).descending();
         return PageRequest.of((pageNo == 0 ? 0 : pageNo -1 ), pageSize, sort);
     }
-    Page<Unit> search(UnitRepository unitRepository, Map<String, Object> params);
+    Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, Object> params);
 }

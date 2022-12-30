@@ -1,8 +1,12 @@
-package com.coelho.fazfeira.excepitonhandler;
+package com.coelho.fazfeira.util;
 
 import org.postgresql.util.PSQLException;
 
-public class UtilException {
+public class Util {
+
+    private Util(){
+        throw new IllegalStateException("Utility class");
+    }
 
     public static boolean isCausedBy(Throwable caught, Class<? extends Throwable> isOfOrCausedBy) {
         if (caught == null) return false;

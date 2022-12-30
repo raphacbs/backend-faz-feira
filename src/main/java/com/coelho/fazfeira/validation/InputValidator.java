@@ -32,8 +32,9 @@ public class InputValidator<T> {
             for (ConstraintViolation<T> constraintViolation : violations) {
                 messages.add(constraintViolation.getMessage());
             }
-            logger.error("Error occurred: " + String.join(" and ", messages));
-            throw new ResourceValidationException("Error occurred: " + String.join(" and ", messages));
+            String message = String.format("Error occurred: %s ",  String.join(" and ", messages));
+            logger.error(message);
+            throw new ResourceValidationException(message);
         }
         logger.debug("Input of type '{}' validate with success", input.getClass().getName());
     }

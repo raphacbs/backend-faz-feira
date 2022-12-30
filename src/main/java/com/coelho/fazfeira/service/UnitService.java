@@ -1,6 +1,5 @@
 package com.coelho.fazfeira.service;
 
-import com.coelho.fazfeira.behavior.UnitSearchByInitials;
 import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.dto.UnitDto;
@@ -16,9 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -45,7 +41,7 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
         Unit unit = validateAndConvert(unitRequestBody);
         logger.info("Checking if Unit already exists");
         List<Unit> units = this.unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unit.getDescription(), unit.getInitials());
-        if (units.size() > 0) {
+        if (!units.isEmpty()) {
             if (units.stream().anyMatch(x -> x.getInitials().equalsIgnoreCase(unit.getInitials()))) {
                 logger.error("Already exist unit initials {}", unit.getInitials());
                 throw new UnitAlreadyExistException(MessageFormat.format("Already exist unit initials {0}",
@@ -59,7 +55,7 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
         }
         logger.info("Preparing the object record in the database...");
         final Unit saved = this.unitRepository.save(unit);
-        logger.debug("Object saved successfully: {}", saved.toString());
+        logger.debug("Object saved successfully: {}", saved);
 
         logger.info("Preparing object conversion Unit to UnitDto");
         final UnitDto unitDto = this.unitMapper.unitToUnitDto(saved);
@@ -93,14 +89,14 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
         final EnumUnitSearchBehavior enumUnitSearchBehavior = EnumUnitSearchBehavior
                 .find(isNotNull(params.get(Params.UNIT_INITIALS)),
                         isNotNull(params.get(Params.UNIT_DESCRIPTION)));
-        Page<Unit> pageUnit = enumUnitSearchBehavior.getUnitSearchBehavior().search(this.unitRepository, params);
+        Page<Unit> pageUnit = enumUnitSearchBehavior.getUnitSearchBehavior().searchPageUnit(this.unitRepository, params);
         return this.unitMapper.pageUnitToResponseList(pageUnit);
     }
 
 
     private Unit validateAndConvert(UnitRequestBody unitRequestBody) {
         inputValidator.validate(unitRequestBody);
-        logger.debug("Preparing object conversion UnitRequestBody to Unit. {}", unitRequestBody.toString());
+        logger.debug("Preparing object conversion UnitRequestBody to Unit. {}", unitRequestBody);
         Unit unit = this.unitMapper.unitRequestBodyToUnit(unitRequestBody);
         logger.info("Object converted successfully");
         return unit;

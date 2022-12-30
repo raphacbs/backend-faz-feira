@@ -6,12 +6,12 @@ import com.coelho.fazfeira.dto.ResponseList;
 import java.util.Map;
 import java.util.UUID;
 
-public interface IService<DTO, Input> {
-    DTO create(Input obj);
+public interface IService<D, I> {
+    D create(I obj);
 
-    DTO update(Input obj);
+    D update(I obj);
 
-    DTO delete(UUID id);
+    D delete(UUID id);
 
-    ResponseList<DTO> getByParams(Map<String, Object> params);
+    ResponseList<D> getByParams(Map<String, Object> params);
 }

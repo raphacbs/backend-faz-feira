@@ -11,9 +11,8 @@ import java.util.Map;
 public class UnitSearchByInitials implements UnitSearchBehavior{
 
     @Override
-    public Page<Unit> search(UnitRepository unitRepository, Map<String, Object> params) {
-        Page<Unit> unitPage = unitRepository.findByInitialsIgnoreCaseContaining(getPageable(params),
+    public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, Object> params) {
+        return unitRepository.findByInitialsIgnoreCaseContaining(getPageable(params),
                 params.get(Params.UNIT_INITIALS).toString());
-        return unitPage;
     }
 }

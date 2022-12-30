@@ -12,7 +12,7 @@ import java.util.Map;
 public class UnitSearchByDescriptionOrInitials implements UnitSearchBehavior{
 
     @Override
-    public Page<Unit> search(UnitRepository unitRepository, Map<String, Object> params) {
+    public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, Object> params) {
         return unitRepository
                 .findByDescriptionOrInitialsIgnoreCaseContaining(getPageable(params),
                         params.get(Params.UNIT_DESCRIPTION).toString(),

@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 @WebMvcTest(controllers = UnitController.class)
 @AutoConfigureMockMvc
-public class UnitControllerTest {
+class UnitControllerTest {
 
     @MockBean
     private UnitService unitService;
@@ -37,7 +37,7 @@ public class UnitControllerTest {
     private UnitRequestBody unitRequestBody;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
         unitRequestBody = UnitRequestBodyBuilder.createValid();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -46,7 +46,7 @@ public class UnitControllerTest {
     }
 
     @Test
-    public void whenPostRequestToUnitsAndValidUnit_then201() throws Exception{
+    void whenPostRequestToUnitsAndValidUnit_then201() throws Exception{
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/units")
                         .content(json.write(unitRequestBody).getJson())

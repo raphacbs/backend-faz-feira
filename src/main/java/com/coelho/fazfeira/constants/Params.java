@@ -1,10 +1,13 @@
 package com.coelho.fazfeira.constants;
 
 public class Params {
-    public final static String UNIT_DESCRIPTION = "description";
-    public final static String UNIT_INITIALS = "initials";
-    public final static String NO_PAGE = "pageNo";
-    public final static String PAGE_SIZE = "pageSize";
-    public final static String SORT_BY = "sortBy";
-    public final static String SORT_DIR = "sortDir";
+    private Params(){
+        throw new IllegalStateException("Utility class");
+    }
+    public static final String UNIT_DESCRIPTION = "description";
+    public static final String UNIT_INITIALS = "initials";
+    public static final String NO_PAGE = "pageNo";
+    public static final String PAGE_SIZE = "pageSize";
+    public static final String SORT_BY = "sortBy";
+    public static final String SORT_DIR = "sortDir";
 }

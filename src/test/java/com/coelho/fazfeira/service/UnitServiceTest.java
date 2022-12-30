@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
-public class UnitServiceTest {
+class UnitServiceTest {
     @InjectMocks
     private UnitService unitService;
 
