@@ -46,6 +46,9 @@ class UnitServiceTest {
     private UnitRepository unitRepository;
 
     @Mock
+    private InputValidator<UnitRequestBody> inputValidatorMock;
+
+    @Mock
     private Validator validator;
     private Validator violationCreatorValidator;
     private final UnitRequestBody withoutInitials = UnitRequestBodyBuilder.createWithoutInitials();

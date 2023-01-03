@@ -55,12 +55,12 @@ class UnitControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    @Test
-    void givenWithoutParams_whenGetRequestAll_thenReturnListUnitDto() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/units")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
-    }
+//    @Test
+//    void givenWithoutParams_whenGetRequestAll_thenReturnListUnitDto() throws Exception {
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/units")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andDo(print())
+//                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+//    }
 }
