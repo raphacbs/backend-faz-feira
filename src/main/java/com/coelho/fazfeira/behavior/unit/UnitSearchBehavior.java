@@ -1,4 +1,4 @@
-package com.coelho.fazfeira.behavior;
+package com.coelho.fazfeira.behavior.unit;
 
 import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.model.Unit;

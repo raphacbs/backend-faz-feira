@@ -48,6 +48,7 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
         params.put(Params.UNIT_DESCRIPTION, unitRequestBody.getDescription());
         params.put(Params.UNIT_INITIALS, unitRequestBody.getInitials());
 
+        assert enumUnitSearchBehavior != null;
         Page<Unit> unitPage = enumUnitSearchBehavior.getUnitSearchBehavior()
                 .searchPageUnit(unitRepository, params);
 
@@ -100,8 +101,15 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
         final EnumUnitSearchBehavior enumUnitSearchBehavior = EnumUnitSearchBehavior
                 .find(isNotNull(params.get(Params.UNIT_INITIALS)),
                         isNotNull(params.get(Params.UNIT_DESCRIPTION)));
+        assert enumUnitSearchBehavior != null;
         Page<Unit> pageUnit = enumUnitSearchBehavior.getUnitSearchBehavior().searchPageUnit(this.unitRepository, params);
         return this.unitMapper.pageUnitToResponseList(pageUnit);
+    }
+
+    @Override
+    public Optional<UnitDto> getById(UUID id) {
+        final Optional<Unit> unitOptional = this.unitRepository.findById(id);
+        return unitOptional.map(this.unitMapper::unitToUnitDto);
     }
 
 

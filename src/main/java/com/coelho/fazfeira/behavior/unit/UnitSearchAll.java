@@ -1,6 +1,5 @@
-package com.coelho.fazfeira.behavior;
+package com.coelho.fazfeira.behavior.unit;
 
-import com.coelho.fazfeira.dto.UnitRequestBody;
 import com.coelho.fazfeira.model.Unit;
 import com.coelho.fazfeira.repository.UnitRepository;
 import org.springframework.data.domain.Page;

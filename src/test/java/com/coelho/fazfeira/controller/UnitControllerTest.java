@@ -46,14 +46,21 @@ class UnitControllerTest {
     }
 
     @Test
-    void whenPostRequestToUnitsAndValidUnit_then201() throws Exception{
-
+    void whenPostRequestToUnitsAndValidUnit_then201() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/units")
                         .content(json.write(unitRequestBody).getJson())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+    }
 
+    @Test
+    void givenWithoutParams_whenGetRequestAll_thenReturnListUnitDto() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/units")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 }

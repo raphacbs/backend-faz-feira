@@ -1,4 +1,4 @@
-package com.coelho.fazfeira.behavior;
+package com.coelho.fazfeira.behavior.unit;
 
 import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.model.Unit;
@@ -7,14 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-
 @Component
-public class UnitSearchByDescription implements UnitSearchBehavior{
-
+public class UnitSearchByInitials implements UnitSearchBehavior{
 
     @Override
     public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, Object> params) {
-        return unitRepository.findByDescriptionIgnoreCaseContaining(getPageable(params),
-                params.get(Params.UNIT_DESCRIPTION).toString());
+        return unitRepository.findByInitialsIgnoreCaseContaining(getPageable(params),
+                String.valueOf(params.get(Params.UNIT_INITIALS)));
     }
 }

@@ -1,16 +1,16 @@
 package com.coelho.fazfeira.service;
 
-import com.coelho.fazfeira.behavior.*;
+import com.coelho.fazfeira.behavior.unit.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
 public enum EnumUnitSearchBehavior {
-    BY_DESCRIPTION(false, true, new UnitSearchByDescription()),
-    BY_INITIALS(true, false, new UnitSearchByInitials()),
-    BY_DESCRIPTION_AND_INITIALS(true, true, new UnitSearchByDescriptionAndInitials()),
-    ALL(false, false, new UnitSearchAll());
+    BY_DESCRIPTION( false,true, new UnitSearchByDescription()),
+    BY_INITIALS( true, false, new UnitSearchByInitials()),
+    BY_DESCRIPTION_AND_INITIALS( true,true, new UnitSearchByDescriptionAndInitials()),
+    ALL( false, false,new UnitSearchAll());
 
     private final boolean initialsParam;
     private final boolean descriptionParam;

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -42,14 +44,24 @@ public class UnitController {
             @RequestParam(value = "sortBy", defaultValue = "description", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir) {
 
-        Map<String,Object> params = new HashMap<>();
-        params.put(Params.UNIT_DESCRIPTION,description);
-        params.put(Params.UNIT_INITIALS,initials);
-        params.put(Params.NO_PAGE,pageNo);
-        params.put(Params.PAGE_SIZE,pageSize);
-        params.put(Params.SORT_BY,sortBy);
-        params.put(Params.SORT_DIR,sortDir);
+        Map<String, Object> params = new HashMap<>();
+        params.put(Params.UNIT_DESCRIPTION, description);
+        params.put(Params.UNIT_INITIALS, initials);
+        params.put(Params.NO_PAGE, pageNo);
+        params.put(Params.PAGE_SIZE, pageSize);
+        params.put(Params.SORT_BY, sortBy);
+        params.put(Params.SORT_DIR, sortDir);
 
         return ResponseEntity.ok(this.unitService.getByParams(params));
     }
+
+    @GetMapping(path = "/{id:^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$}")
+    public ResponseEntity<UnitDto> getById(@PathVariable("id") UUID id) {
+        final Optional<UnitDto> optionalUnitDto = this.unitService.getById(id);
+        return optionalUnitDto.map(ResponseEntity::ok)
+                .orElseGet(() ->
+                        ResponseEntity.noContent().build()
+                );
+    }
+
 }
