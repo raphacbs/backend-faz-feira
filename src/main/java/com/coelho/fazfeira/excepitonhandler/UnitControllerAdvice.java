@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@ControllerAdvice(basePackages = "com.coelho.fazfeira.controller")
+@ControllerAdvice(basePackages = {"com.coelho.fazfeira.controller", "com.coelho.fazfeira.filter"})
 public class UnitControllerAdvice {
 
     @ResponseBody
@@ -34,7 +34,13 @@ public class UnitControllerAdvice {
     @ExceptionHandler(UnitNotExistException.class)
     public ResponseEntity<MessageExceptionHandler> unitNotExist(UnitNotExistException unitNotExistException){
         MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.NO_CONTENT.value(), unitNotExistException.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.NO_CONTENT);
+    }
+    @ResponseBody
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<MessageExceptionHandler> tokenNotExist(TokenException tokenException){
+        MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.UNAUTHORIZED.value(),  tokenException.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
 }

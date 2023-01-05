@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -34,6 +35,9 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
 
     @Autowired
     private InputValidator<UnitRequestBody> inputValidator;
+
+    @Autowired
+    HttpServletRequest request;
 
     @Override
     public UnitDto create(UnitRequestBody unitRequestBody) {
