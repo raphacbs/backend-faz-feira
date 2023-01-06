@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "product")
@@ -16,22 +18,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "code", nullable = false)
+    @Column(name = "code")
     private String code;
     @Column(nullable = false)
     private String description;
-    @Column(nullable = false)
+    @Column
     private String brand;
-    @Column(nullable = false)
+    @Column
     private String thumbnail;
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at",nullable = false)
     private LocalDateTime updateAt;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
     @ManyToOne
     @JoinColumn(name = "unit_id")
     private Unit unit;

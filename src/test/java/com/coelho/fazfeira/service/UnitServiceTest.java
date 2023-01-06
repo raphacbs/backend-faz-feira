@@ -8,7 +8,7 @@ import com.coelho.fazfeira.dto.UnitDto;
 import com.coelho.fazfeira.dto.UnitRequestBody;
 import com.coelho.fazfeira.excepitonhandler.ResourceValidationException;
 import com.coelho.fazfeira.excepitonhandler.UnitAlreadyExistException;
-import com.coelho.fazfeira.excepitonhandler.UnitNotExistException;
+import com.coelho.fazfeira.excepitonhandler.EntityNotExistException;
 import com.coelho.fazfeira.model.Unit;
 import com.coelho.fazfeira.repository.UnitRepository;
 import com.coelho.fazfeira.validation.InputValidator;
@@ -148,10 +148,10 @@ class UnitServiceTest {
         when(unitRepository.findById(any()))
                 .thenReturn(Optional.empty());
 
-        UnitNotExistException unitNotExistException =
-                Assertions.assertThrows(UnitNotExistException.class,
+        EntityNotExistException entityNotExistException =
+                Assertions.assertThrows(EntityNotExistException.class,
                         () -> unitService.update(unitRequestBodyNotExist));
-        Assertions.assertTrue(unitNotExistException.getMessage().equalsIgnoreCase(message));
+        Assertions.assertTrue(entityNotExistException.getMessage().equalsIgnoreCase(message));
     }
 
     @Test

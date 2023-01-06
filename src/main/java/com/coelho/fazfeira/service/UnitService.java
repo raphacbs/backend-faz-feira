@@ -1,11 +1,12 @@
 package com.coelho.fazfeira.service;
 
+import com.coelho.fazfeira.behavior.enums.EnumUnitSearchBehavior;
 import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.dto.UnitDto;
 import com.coelho.fazfeira.dto.UnitRequestBody;
 import com.coelho.fazfeira.excepitonhandler.UnitAlreadyExistException;
-import com.coelho.fazfeira.excepitonhandler.UnitNotExistException;
+import com.coelho.fazfeira.excepitonhandler.EntityNotExistException;
 import com.coelho.fazfeira.mapper.UnitMapper;
 import com.coelho.fazfeira.model.Unit;
 import com.coelho.fazfeira.repository.UnitRepository;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +24,8 @@ import java.util.*;
 
 import static com.coelho.fazfeira.util.Nullables.*;
 
-@Service
-public class UnitService implements IService<UnitDto, UnitRequestBody> {
+@org.springframework.stereotype.Service
+public class UnitService implements Service<UnitDto, UnitRequestBody> {
 
     private static final Logger logger = LoggerFactory.getLogger(UnitService.class);
 
@@ -89,7 +89,7 @@ public class UnitService implements IService<UnitDto, UnitRequestBody> {
         if (optionalUnit.isEmpty()) {
             String message = MessageFormat.format("The unit with the id: {0} not exist", unit.getId());
             logger.error(message);
-            throw new UnitNotExistException(message);
+            throw new EntityNotExistException(message);
         }
         final Unit unitSaved = this.unitRepository.save(unit);
         return this.unitMapper.unitToUnitDto(unitSaved);

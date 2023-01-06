@@ -29,7 +29,10 @@ public class ShoppingList {
     private LocalDateTime createdAt;
     @Column(name = "updated_at",nullable = false)
     private LocalDateTime updateAt;
+    @Column(name = "is_open", nullable = false)
+    private boolean isOpen;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

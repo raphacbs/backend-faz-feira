@@ -2,13 +2,12 @@ package com.coelho.fazfeira.service;
 
 
 import com.coelho.fazfeira.dto.ResponseList;
-import com.coelho.fazfeira.dto.UnitDto;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IService<D, I> {
+public interface Service<D, I> {
     D create(I obj);
 
     D update(I obj);

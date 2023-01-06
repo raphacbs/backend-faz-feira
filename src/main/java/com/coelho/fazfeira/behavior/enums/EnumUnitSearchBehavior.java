@@ -1,4 +1,4 @@
-package com.coelho.fazfeira.service;
+package com.coelho.fazfeira.behavior.enums;
 
 import com.coelho.fazfeira.behavior.unit.*;
 import lombok.AllArgsConstructor;

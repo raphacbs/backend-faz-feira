@@ -8,9 +8,12 @@ public class Params {
         throw new IllegalStateException("Utility class");
     }
 
+    public static final String PRODUCT_CODE = "code";
     public static final String UNIT_DESCRIPTION = "description";
     public static final String UNIT_INITIALS = "initials";
+    public static final String DESCRIPTION = "description";
     public static final String ID = "id";
+    public static final String USER_ID = "userId";
     public static final String NO_PAGE = "pageNo";
     public static final String PAGE_SIZE = "pageSize";
     public static final String SORT_BY = "sortBy";

@@ -17,7 +17,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterBefore(filterChainExceptionHandler, LogoutFilter.class);
+        http.addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
+                .csrf().disable();
     }
 
 }

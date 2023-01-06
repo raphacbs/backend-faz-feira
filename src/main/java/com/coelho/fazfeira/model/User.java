@@ -1,9 +1,6 @@
 package com.coelho.fazfeira.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,6 +13,7 @@ import static javax.persistence.EnumType.STRING;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name="tb_user")
 public class User {
@@ -38,6 +36,5 @@ public class User {
     private String lastName;
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
-    @OneToMany(mappedBy = "user")
-    private Set<Category> categories;
+
 }
