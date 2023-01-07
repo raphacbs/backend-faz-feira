@@ -8,6 +8,10 @@ public class Params {
         throw new IllegalStateException("Utility class");
     }
 
+    public static final String SUPERMARKET_NAME = "name";
+    public static final String SUPERMARKET_RADIUS = "radiusM";
+    public static final String SUPERMARKET_LONGITUDE = "longitude";
+    public static final String SUPERMARKET_LATITUDE = "latitude";
     public static final String PRODUCT_CODE = "code";
     public static final String UNIT_DESCRIPTION = "description";
     public static final String UNIT_INITIALS = "initials";

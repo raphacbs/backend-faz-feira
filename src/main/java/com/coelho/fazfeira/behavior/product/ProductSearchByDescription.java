@@ -8,10 +8,12 @@ import org.springframework.data.domain.Page;
 
 import java.util.Map;
 
+import static com.coelho.fazfeira.constants.Params.DESCRIPTION;
+
 public class ProductSearchByDescription implements SearchBehavior<Product, ProductRepository> {
     @Override
     public Page<Product> searchPage(ProductRepository repository, Map<String, Object> params) {
        return repository.findByDescriptionIgnoreCaseContaining(getPageable(params),
-                String.valueOf(params.get(Params.DESCRIPTION)));
+                String.valueOf(params.get(DESCRIPTION)));
     }
 }
