@@ -29,9 +29,9 @@ public class SupermarketController {
     @GetMapping
     public ResponseEntity<ResponseList<SupermarketDto>> get(
             @RequestParam(value = SUPERMARKET_NAME, required = false) String name,
-            @RequestParam(value = Params.SUPERMARKET_LONGITUDE, required = false) String longitude,
-            @RequestParam(value = Params.SUPERMARKET_LATITUDE, required = false) String latitude,
-            @RequestParam(value = Params.SUPERMARKET_RADIUS, required = false) String radius,
+            @RequestParam(value = Params.SUPERMARKET_LONGITUDE, required = true) String longitude,
+            @RequestParam(value = Params.SUPERMARKET_LATITUDE, required = true) String latitude,
+            @RequestParam(value = Params.SUPERMARKET_RADIUS, required = true) String radius,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = SUPERMARKET_NAME, required = false) String sortBy,

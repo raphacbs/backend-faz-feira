@@ -34,7 +34,8 @@ public class SupermarketSearchAPI implements SearchBehavior<Supermarket, Superma
 
         RestTemplate restTemplate = new RestTemplate();
         String url = MessageFormat.format("https://api.geoapify.com/v2/places" +
-                        "?categories=commercial.supermarket&filter=circle:{0},{1},{2}&limit=20&apiKey={3}",
+                        "?categories=commercial.supermarket,commercial.marketplace" +
+                        "&filter=circle:{0},{1},{2}&limit=20&apiKey={3}",
                 longitude,
                 latitude,
                 radius,

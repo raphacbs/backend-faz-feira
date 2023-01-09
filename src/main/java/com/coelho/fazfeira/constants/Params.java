@@ -9,6 +9,7 @@ public class Params {
     }
 
     public static final String SUPERMARKET_NAME = "name";
+    public static final String SHOPPING_LIST_SUPERMARKET_ID = "supermarketId";
     public static final String SUPERMARKET_RADIUS = "radiusM";
     public static final String SUPERMARKET_LONGITUDE = "longitude";
     public static final String SUPERMARKET_LATITUDE = "latitude";
@@ -16,6 +17,7 @@ public class Params {
     public static final String UNIT_DESCRIPTION = "description";
     public static final String UNIT_INITIALS = "initials";
     public static final String DESCRIPTION = "description";
+    public static final String SHOPPING_LIST_IS_OPEN = "isOpen";
     public static final String ID = "id";
     public static final String USER_ID = "userId";
     public static final String NO_PAGE = "pageNo";

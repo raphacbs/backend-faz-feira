@@ -21,4 +21,6 @@ public interface SupermarketRepository extends JpaRepository<Supermarket, Long> 
     Page<Supermarket> findByPlaceId(String placeId,
                                     Pageable pageable);
 
+    Page<Supermarket> findByNameIgnoreCaseContaining(Pageable pageable, String name);
+
 }

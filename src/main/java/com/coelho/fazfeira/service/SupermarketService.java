@@ -28,6 +28,7 @@ public class SupermarketService {
 
         EnumSupermarketSearch search = EnumSupermarketSearch.find(isNotNull(params.get(SUPERMARKET_LONGITUDE)),
                 isNotNull(params.get(SUPERMARKET_LATITUDE)),
+                isNotNull(params.get(SUPERMARKET_NAME)),
                 false);
 
         assert search != null;
@@ -36,6 +37,7 @@ public class SupermarketService {
         if(supermarketPage.isEmpty()){
             search = EnumSupermarketSearch.find(isNotNull(params.get(SUPERMARKET_LONGITUDE)),
                     isNotNull(params.get(SUPERMARKET_LATITUDE)),
+                    isNotNull(params.get(SUPERMARKET_NAME)),
                     true);
 
             supermarketPage = search.getSearchBehavior().searchPage(repository, params);
