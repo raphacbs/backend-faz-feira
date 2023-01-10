@@ -11,8 +11,8 @@ public class UnitParamsBuilder {
     private String initials;
     private String description;
 
-    public Map<String, Object> create(){
-        Map<String, Object> params =  Params.getDefaultParams();
+    public Map<String, String> create(){
+        Map<String, String> params =  Params.getDefaultParams();
         params.put(Params.UNIT_INITIALS, this.initials);
         params.put(Params.UNIT_DESCRIPTION, this.description);
         return params;

@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface SearchBehavior<T, R> extends com.coelho.fazfeira.behavior.Pageable {
 
-    Page<T> searchPage(R repository, Map<String, Object> params);
+    Page<T> searchPage(R repository, Map<String, String> params);
 }

@@ -23,10 +23,10 @@ public class SupermarketSearchAPI implements SearchBehavior<Supermarket, Superma
     private final SupermarketMapper supermarketMapper = SupermarketMapper.INSTANCE;
 
     @Override
-    public Page<Supermarket> searchPage(SupermarketRepository repository, Map<String, Object> params) {
+    public Page<Supermarket> searchPage(SupermarketRepository repository, Map<String, String> params) {
         String apiKey = System.getenv("X_API_PLACE_TOKEN");
-        String latitude = String.valueOf(params.get(SUPERMARKET_LATITUDE));
-        String longitude = String.valueOf(params.get(SUPERMARKET_LONGITUDE));
+        String latitude = params.get(SUPERMARKET_LATITUDE);
+        String longitude = params.get(SUPERMARKET_LONGITUDE);
         double radius =Double.parseDouble(String.valueOf(params.get(SUPERMARKET_RADIUS)));
 
         HttpHeaders headers = new HttpHeaders();

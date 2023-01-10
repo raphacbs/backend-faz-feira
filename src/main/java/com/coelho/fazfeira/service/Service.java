@@ -12,8 +12,8 @@ public interface Service<D, I> {
 
     D update(I obj);
 
-    D delete(UUID id);
+    void delete(UUID id);
 
-    ResponseList<D> getByParams(Map<String, Object> params);
+    ResponseList<D> getByParams(Map<String, String> params);
     Optional<D> getById(UUID id);
 }

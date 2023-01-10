@@ -17,8 +17,8 @@ public class SupermarketSearchByName implements SearchBehavior<Supermarket, Supe
     private final SupermarketMapper supermarketMapper = SupermarketMapper.INSTANCE;
 
     @Override
-    public Page<Supermarket> searchPage(SupermarketRepository repository, Map<String, Object> params) {
-        String name = String.valueOf(params.get(SUPERMARKET_NAME));
+    public Page<Supermarket> searchPage(SupermarketRepository repository, Map<String, String> params) {
+        String name = params.get(SUPERMARKET_NAME);
         return repository.findByNameIgnoreCaseContaining(getPageable(params), name);
     }
 }

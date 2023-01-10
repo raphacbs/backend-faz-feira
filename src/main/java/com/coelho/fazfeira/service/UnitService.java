@@ -48,7 +48,7 @@ public class UnitService implements Service<UnitDto, UnitRequestBody> {
         final EnumUnitSearchBehavior enumUnitSearchBehavior = EnumUnitSearchBehavior
                 .find(isNotNull(unitRequestBody.getInitials()),
                         isNotNull(unitRequestBody.getDescription()));
-        Map<String, Object> params = Params.getDefaultParams();
+        Map<String, String> params = Params.getDefaultParams();
         params.put(Params.UNIT_DESCRIPTION, unitRequestBody.getDescription());
         params.put(Params.UNIT_INITIALS, unitRequestBody.getInitials());
 
@@ -96,12 +96,12 @@ public class UnitService implements Service<UnitDto, UnitRequestBody> {
     }
 
     @Override
-    public UnitDto delete(UUID id) {
-        return null;
+    public void delete(UUID id) {
+
     }
 
     @Override
-    public ResponseList<UnitDto> getByParams(Map<String, Object> params) {
+    public ResponseList<UnitDto> getByParams(Map<String, String> params) {
         final EnumUnitSearchBehavior enumUnitSearchBehavior = EnumUnitSearchBehavior
                 .find(isNotNull(params.get(Params.UNIT_INITIALS)),
                         isNotNull(params.get(Params.UNIT_DESCRIPTION)));

@@ -12,5 +12,6 @@ public interface ShoppingListRepository extends JpaRepository<ShoppingList, UUID
     Page<ShoppingList> findByUserAndDescriptionIgnoreCaseContaining(Pageable pageable, User user, String description);
     Page<ShoppingList> findByUserAndDescriptionIgnoreCaseContainingAndIsOpen(Pageable pageable, User user, String description, boolean isOpen);
     Page<ShoppingList> findByUser(Pageable pageable, User user);
+    Page<ShoppingList> findByIdAndUser(Pageable pageable, UUID id, User user);
     Page<ShoppingList> findByUserAndIsOpen(Pageable pageable, User user, boolean isOpen);
 }

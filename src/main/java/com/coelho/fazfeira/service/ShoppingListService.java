@@ -71,14 +71,14 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
     }
 
     @Override
-    public ShoppingListDto delete(UUID id) {
-        return null;
+    public void delete(UUID id) {
+
     }
 
     @Override
-    public ResponseList<ShoppingListDto> getByParams(Map<String, Object> params) {
+    public ResponseList<ShoppingListDto> getByParams(Map<String, String> params) {
 
-        params.put(USER_ID, getUserId());
+        params.put(USER_ID, getUserId().toString());
 
         EnumShoppingListSearch search = EnumShoppingListSearch.find(isNotNull(params.get(DESCRIPTION)),
                 isNotNull(params.get(USER_ID)),

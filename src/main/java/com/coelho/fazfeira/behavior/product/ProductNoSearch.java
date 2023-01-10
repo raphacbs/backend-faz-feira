@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ProductNoSearch implements SearchBehavior<Product, ProductRepository> {
     @Override
-    public Page<Product> searchPage(ProductRepository repository, Map<String, Object> params) {
+    public Page<Product> searchPage(ProductRepository repository, Map<String, String> params) {
         throw new SearchNotAllowedException("Enter at least one of the description or code parameters in the request");
     }
 }

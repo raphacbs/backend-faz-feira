@@ -20,7 +20,7 @@ public class SupermarketSearchByLonLat implements SearchBehavior<Supermarket, Su
     private final SupermarketMapper supermarketMapper = SupermarketMapper.INSTANCE;
 
     @Override
-    public Page<Supermarket> searchPage(SupermarketRepository repository, Map<String, Object> params) {
+    public Page<Supermarket> searchPage(SupermarketRepository repository, Map<String, String> params) {
         double latitude = Double.parseDouble(String.valueOf(params.get(SUPERMARKET_LATITUDE)));
         double longitude = Double.parseDouble(String.valueOf(params.get(SUPERMARKET_LONGITUDE)));
         double radius =Double.parseDouble(String.valueOf(params.get(SUPERMARKET_RADIUS))) / 1000;

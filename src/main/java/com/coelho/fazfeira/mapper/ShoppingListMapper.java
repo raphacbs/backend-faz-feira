@@ -3,11 +3,8 @@ package com.coelho.fazfeira.mapper;
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.dto.ShoppingListDto;
 import com.coelho.fazfeira.dto.ShoppingListRequest;
-import com.coelho.fazfeira.dto.SupermarketDto;
 import com.coelho.fazfeira.model.Item;
 import com.coelho.fazfeira.model.ShoppingList;
-import com.coelho.fazfeira.model.Supermarket;
-import org.apache.lucene.util.SloppyMath;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
@@ -16,16 +13,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-import static com.coelho.fazfeira.constants.Params.SUPERMARKET_LATITUDE;
-import static com.coelho.fazfeira.constants.Params.SUPERMARKET_LONGITUDE;
-
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface ShoppingListMapper {
     ShoppingListMapper INSTANCE = Mappers.getMapper(ShoppingListMapper.class);
 
     @ObjectFactory
     default ResponseList<ShoppingListDto> pageSupermarketToResponseList(Page<ShoppingList> shoppingListPage,
-                                                                        Map<String, Object> params) {
+                                                                        Map<String, String> params) {
         final List<ShoppingListDto> shoppingListDtos = new ArrayList<>();
         final List<ShoppingList> shoppingLists = shoppingListPage.get().toList();
         shoppingLists.forEach(shoppingList -> {
@@ -68,7 +62,7 @@ public interface ShoppingListMapper {
     ShoppingList shoppingListDtoToShoppingList(ShoppingListDto shoppingListDto);
 
     @Mapping(source = "supermarketId", target = "supermarket.id")
-    @Mapping(source = "open", target = "open")
+    @Mapping(source = "open", target = "isOpen")
     ShoppingList shoppingListRequestToShoppingList(ShoppingListRequest shoppingListRequest);
 
     List<ShoppingList> shoppingListDtoToShoppingList(List<ShoppingListDto> shoppingListDto);

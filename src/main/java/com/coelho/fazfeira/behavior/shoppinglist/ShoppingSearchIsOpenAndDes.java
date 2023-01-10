@@ -13,9 +13,9 @@ import static com.coelho.fazfeira.constants.Params.*;
 
 public class ShoppingSearchIsOpenAndDes implements SearchBehavior<ShoppingList, ShoppingListRepository> {
     @Override
-    public Page<ShoppingList> searchPage(ShoppingListRepository repository, Map<String, Object> params) {
-        UUID userId = (UUID) params.get(USER_ID);
-        String description = String.valueOf(params.get(DESCRIPTION));
+    public Page<ShoppingList> searchPage(ShoppingListRepository repository, Map<String, String> params) {
+        UUID userId = UUID.fromString(params.get(USER_ID));
+        String description = params.get(DESCRIPTION);
         boolean isOpen = Boolean.parseBoolean(params.get(SHOPPING_LIST_IS_OPEN).toString());
         final User user = User.builder().id(userId).build();
         return repository.findByUserAndDescriptionIgnoreCaseContainingAndIsOpen(getPageable(params),

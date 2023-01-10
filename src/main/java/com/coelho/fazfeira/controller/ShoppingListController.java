@@ -33,12 +33,12 @@ public class ShoppingListController {
             @RequestParam(value = SHOPPING_LIST_SUPERMARKET_ID, required = false) String supermarketId,
             @RequestParam(value = DESCRIPTION, required = false) String description,
             @RequestParam(value = SHOPPING_LIST_IS_OPEN, required = false) String isOpen,
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) String pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) String pageSize,
             @RequestParam(value = "sortBy", defaultValue = DESCRIPTION, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir) {
 
-        Map<String, Object> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put(SHOPPING_LIST_SUPERMARKET_ID, supermarketId);
         params.put(DESCRIPTION, description);
         params.put(SHOPPING_LIST_IS_OPEN, isOpen);

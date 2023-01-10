@@ -13,7 +13,7 @@ public class UnitSearchByDescription implements UnitSearchBehavior{
 
 
     @Override
-    public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, Object> params) {
+    public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, String> params) {
         return unitRepository.findByDescriptionIgnoreCaseContaining(getPageable(params),
                 params.get(Params.UNIT_DESCRIPTION).toString());
     }

@@ -14,8 +14,8 @@ import static com.coelho.fazfeira.constants.Params.PRODUCT_CODE;
 
 public class ProductSearchByCode implements SearchBehavior<Product, ProductRepository> {
     @Override
-    public Page<Product> searchPage(ProductRepository repository, Map<String, Object> params) {
-        final Optional<Product> optionalProduct = repository.findById(String.valueOf(params.get(PRODUCT_CODE)));
+    public Page<Product> searchPage(ProductRepository repository, Map<String, String> params) {
+        final Optional<Product> optionalProduct = repository.findById(params.get(PRODUCT_CODE));
         if(optionalProduct.isEmpty()){
             return Page.empty();
         }else{

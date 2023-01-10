@@ -28,12 +28,12 @@ public class ProductSearchCosmoDesc implements SearchBehavior<Product, ProductRe
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
 
     @Override
-    public Page<Product> searchPage(ProductRepository repository, Map<String, Object> params) {
+    public Page<Product> searchPage(ProductRepository repository, Map<String, String> params) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Cosmos-Token", System.getenv("X_COSMOS_TOKEN"));
         HttpEntity<Void> requestCosmo = new HttpEntity<>(headers);
-        String description = String.valueOf(params.get(DESCRIPTION));
+        String description = params.get(DESCRIPTION);
         try {
             final ResponseEntity<ProductCosmoList> productCosmoDtoResponseEntity = restTemplate.exchange(
                     "https://api.cosmos.bluesoft.com.br/products/?query=" + description,

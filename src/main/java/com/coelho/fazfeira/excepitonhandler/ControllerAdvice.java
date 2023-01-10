@@ -42,6 +42,13 @@ public class ControllerAdvice {
         MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.NO_CONTENT.value(), entityNotExistException.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NO_CONTENT);
     }
+
+    @ResponseBody
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<MessageExceptionHandler> entityNotFound(NotFoundException notFoundException){
+        MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.BAD_REQUEST.value(), notFoundException.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
     @ResponseBody
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<MessageExceptionHandler> tokenNotExist(TokenException tokenException){

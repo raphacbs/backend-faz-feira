@@ -39,12 +39,12 @@ public class UnitController {
     public ResponseEntity<ResponseList<UnitDto>> get(
             @RequestParam(value = Params.UNIT_DESCRIPTION, required = false) String description,
             @RequestParam(value = Params.UNIT_INITIALS, required = false) String initials,
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) String pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) String pageSize,
             @RequestParam(value = "sortBy", defaultValue = "description", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir) {
 
-        Map<String, Object> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put(Params.UNIT_DESCRIPTION, description);
         params.put(Params.UNIT_INITIALS, initials);
         params.put(Params.NO_PAGE, pageNo);

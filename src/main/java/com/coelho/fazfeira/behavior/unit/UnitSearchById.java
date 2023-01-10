@@ -10,9 +10,9 @@ import java.util.UUID;
 
 public class UnitSearchById implements UnitSearchBehavior {
     @Override
-    public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, Object> params) {
+    public Page<Unit> searchPageUnit(UnitRepository unitRepository, Map<String, String> params) {
         return unitRepository.findById(getPageable(params),
-                UUID.fromString(String.valueOf(params.get(Params.ID)))
+                UUID.fromString(params.get(Params.ID))
         );
     }
 }
