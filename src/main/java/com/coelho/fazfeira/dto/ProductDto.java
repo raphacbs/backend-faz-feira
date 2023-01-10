@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,4 +21,5 @@ public class ProductDto implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
     private UnitDto unit;
+    private List<PriceHistoryDto> priceHistories;
 }

@@ -32,7 +32,7 @@ public class ShoppingListController {
     public ResponseEntity<ResponseList<ShoppingListDto>> get(
             @RequestParam(value = SHOPPING_LIST_SUPERMARKET_ID, required = false) String supermarketId,
             @RequestParam(value = DESCRIPTION, required = false) String description,
-            @RequestParam(value = SHOPPING_LIST_IS_OPEN, required = false) String isOpen,
+            @RequestParam(value = SHOPPING_LIST_STATUS, required = false) String status,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) String pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) String pageSize,
             @RequestParam(value = "sortBy", defaultValue = DESCRIPTION, required = false) String sortBy,
@@ -40,8 +40,8 @@ public class ShoppingListController {
 
         Map<String, String> params = new HashMap<>();
         params.put(SHOPPING_LIST_SUPERMARKET_ID, supermarketId);
+        params.put(SHOPPING_LIST_STATUS, status);
         params.put(DESCRIPTION, description);
-        params.put(SHOPPING_LIST_IS_OPEN, isOpen);
         params.put(Params.NO_PAGE, pageNo);
         params.put(Params.PAGE_SIZE, pageSize);
         params.put(Params.SORT_BY, sortBy);

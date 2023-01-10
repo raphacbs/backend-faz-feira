@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import static javax.persistence.EnumType.STRING;
+
 @Entity
 @Table(name = "shopping_list")
 @Getter
@@ -27,15 +29,13 @@ public class ShoppingList {
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at",nullable = false)
-    private LocalDateTime updateAt;
-    @Column(name = "is_open", nullable = false)
-    private boolean isOpen;
+    private LocalDateTime updatedAt;
+    @Enumerated(STRING)
+    private ShoppingListStatus status;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
     @OneToMany(mappedBy="shoppingList")
     Set<Item> items;
-
 
 }

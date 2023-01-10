@@ -19,5 +19,5 @@ public class ShoppingListRequest {
     @NotBlank(message = "description is mandatory")
     private String description;
 
-    private boolean isOpen;
+    private String status;
 }

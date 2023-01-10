@@ -20,8 +20,8 @@ public class ShoppingListDto implements Serializable {
     private String description;
     private UUID supermarketId;
     private LocalDateTime createdAt;
-    private LocalDateTime updateAt;
-    private boolean isOpen;
+    private LocalDateTime updatedAt;
+    private String status;
     private ItemsInfo itemsInfo;
 
     @Data

@@ -38,7 +38,7 @@ public interface ProductMapper {
 
 
     @ObjectFactory
-    default ResponseList<ProductDto> pageUnitToResponseList(Page<Product> productPage){
+    default ResponseList<ProductDto> pageProductToResponseList(Page<Product> productPage){
         ResponseList<ProductDto> unitResponseList = new ResponseList<>();
         unitResponseList.setItems(productToProductDto(productPage.get().toList()));
         unitResponseList.setPageNo(productPage.getNumber()+1);
@@ -49,6 +49,16 @@ public interface ProductMapper {
         return unitResponseList;
     }
 
-    UUID map(String value);
-    String map(UUID value);
+    default UUID map(String value){
+        if(value == null){
+            return null;
+        }
+        return UUID.fromString(value);
+    }
+    default String map(UUID value){
+        if(value == null){
+            return null;
+        }
+        return value.toString();
+    }
 }

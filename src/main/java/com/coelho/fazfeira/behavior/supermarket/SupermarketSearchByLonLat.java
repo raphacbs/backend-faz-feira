@@ -26,6 +26,6 @@ public class SupermarketSearchByLonLat implements SearchBehavior<Supermarket, Su
         double radius =Double.parseDouble(String.valueOf(params.get(SUPERMARKET_RADIUS))) / 1000;
 
         final List<Supermarket> supermarkets = repository.findSupermarketWithInDistance(latitude, longitude, radius);
-        return new PageImpl<Supermarket>(supermarkets, getPageable(params), Integer.parseInt( params.get(PAGE_SIZE).toString()));
+        return new PageImpl<Supermarket>(supermarkets, getPageable(params), Integer.parseInt( String.valueOf(params.get(PAGE_SIZE))));
     }
 }

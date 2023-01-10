@@ -31,5 +31,9 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "unit_id")
     private Unit unit;
+    @OneToMany(mappedBy = "product")
+    private Set<PriceHistory> priceHistories;
+
+
 
 }

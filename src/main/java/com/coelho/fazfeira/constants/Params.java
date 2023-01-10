@@ -17,12 +17,13 @@ public class Params {
     public static final String UNIT_DESCRIPTION = "description";
     public static final String UNIT_INITIALS = "initials";
     public static final String DESCRIPTION = "description";
-    public static final String ITEM_PRODUCT_DESC = "productDesc";
+    public static final String PARAM_PRODUCT_DESC = "productDesc";
+    public static final String PARAM_PRODUCT_CODE = "productCode";
     public static final String ITEM_UPDATED_AT = "updatedAt";
     public static final String ITEM_PRICE = "price";
     public static final String ITEM_IS_ADDED = "isAdded";
     public static final String ITEM_SHOPPING_LIST_ID = "shoppingListId";
-    public static final String SHOPPING_LIST_IS_OPEN = "isOpen";
+    public static final String SHOPPING_LIST_STATUS = "status";
     public static final String ID = "id";
     public static final String USER_ID = "userId";
     public static final String NO_PAGE = "pageNo";

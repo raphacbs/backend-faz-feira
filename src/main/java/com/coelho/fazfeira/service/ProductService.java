@@ -104,7 +104,7 @@ public class ProductService  {
             page = searchBehavior.searchPage(this.productRepository, params);
         }
 
-        return this.productMapper.pageUnitToResponseList(page);
+        return this.productMapper.pageProductToResponseList(page);
     }
 
     public Optional<ProductDto> getById(String id) {

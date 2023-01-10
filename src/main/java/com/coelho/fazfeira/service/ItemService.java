@@ -7,11 +7,9 @@ import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.dto.ItemDto;
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.excepitonhandler.NotFoundException;
+import com.coelho.fazfeira.excepitonhandler.ShoppingListStatusException;
 import com.coelho.fazfeira.mapper.ItemMapper;
-import com.coelho.fazfeira.model.Item;
-import com.coelho.fazfeira.model.Product;
-import com.coelho.fazfeira.model.ShoppingList;
-import com.coelho.fazfeira.model.User;
+import com.coelho.fazfeira.model.*;
 import com.coelho.fazfeira.repository.ItemRepository;
 import com.coelho.fazfeira.repository.ShoppingListRepository;
 import com.coelho.fazfeira.validation.InputValidator;
@@ -54,13 +52,17 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         item.setCreatedAt(LocalDateTime.now());
         item.setUpdatedAt(LocalDateTime.now());
         User user = User.builder().id(getUserId()).build();
-        final Page<ShoppingList> shoppingListPage = this.shoppingListRepository
-                .findByIdAndUser(getPageable(Params.getDefaultParams()),
-                        itemDto.getShoppingList().getId(),
+        final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
+                .findByIdAndUser(itemDto.getShoppingList().getId(),
                         user);
         if(shoppingListPage.isEmpty()){
             logger.warn("Shopping list does not exist for this user");
             throw new NotFoundException("Shopping list does not exist for this user");
+        }
+
+        if(shoppingListPage.get().getStatus() == ShoppingListStatus.READY){
+            logger.warn("You cannot add items to lists with READY status.");
+            throw new ShoppingListStatusException("You cannot add items to lists with READY status.");
         }
 
         ShoppingList shoppingList = ShoppingList.builder().id(itemDto.getShoppingList().getId()).build();
@@ -90,10 +92,8 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
     public ItemDto update(ItemDto itemDto) {
 
         User user = User.builder().id(getUserId()).build();
-        final Page<ShoppingList> shoppingListPage = this.shoppingListRepository
-                .findByIdAndUser(getPageable(Params.getDefaultParams()),
-                        itemDto.getShoppingList().getId(),
-                        user);
+        final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
+                .findByIdAndUser(itemDto.getShoppingList().getId(),user);
         if(shoppingListPage.isEmpty()){
             logger.warn("Shopping list does not exist for this user");
             throw new NotFoundException("Shopping list does not exist for this user");
@@ -125,9 +125,8 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         Item item = itemOptional.get();
 
         User user = User.builder().id(getUserId()).build();
-        final Page<ShoppingList> shoppingListPage = this.shoppingListRepository
-                .findByIdAndUser(getPageable(Params.getDefaultParams()),
-                        item.getShoppingList().getId(),
+        final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
+                .findByIdAndUser(item.getShoppingList().getId(),
                         user);
         if(shoppingListPage.isEmpty()){
             logger.warn("Shopping list does not exist for this user");
@@ -142,7 +141,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
     @Override
     public ResponseList<ItemDto> getByParams(Map<String, String> params) {
 
-        EnumItemSearch enumItemSearch = EnumItemSearch.find(isNotNull(params.get(Params.ITEM_PRODUCT_DESC)),
+        EnumItemSearch enumItemSearch = EnumItemSearch.find(isNotNull(params.get(Params.PARAM_PRODUCT_DESC)),
                 isNotNull(params.get(Params.ITEM_IS_ADDED)));
 
         final SearchBehavior searchBehavior = enumItemSearch.getSearchBehavior();

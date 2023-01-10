@@ -62,4 +62,11 @@ public class ControllerAdvice {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ResponseBody
+    @ExceptionHandler(ShoppingListStatusException.class)
+    public ResponseEntity<MessageExceptionHandler> shoopingListStatus(ShoppingListStatusException shoppingListStatusException){
+        MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.CONFLICT.value(),  shoppingListStatusException.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
 }

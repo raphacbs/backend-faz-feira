@@ -40,10 +40,16 @@ public interface ItemMapper {
     }
 
     default UUID map(String value) {
+        if(value == null){
+            return null;
+        }
         return UUID.fromString(value);
     }
 
     default String map(UUID value) {
+        if(value == null){
+            return null;
+        }
         return value.toString();
     }
 }

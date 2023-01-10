@@ -46,8 +46,7 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
     public ShoppingListDto create(ShoppingListRequest obj) {
         final ShoppingList shoppingList = validateAndConvert(obj);
         shoppingList.setCreatedAt(LocalDateTime.now());
-        shoppingList.setUpdateAt(LocalDateTime.now());
-        shoppingList.setOpen(true);
+        shoppingList.setUpdatedAt(LocalDateTime.now());
         shoppingList.setUser(User.builder().id(getUserId()).build());
         this.shoppingListRepository.save(shoppingList);
         return this.shoppingListMapper.shoppingListToShoppingListDto(shoppingList);
@@ -62,8 +61,7 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
             throw new EntityNotExistException("ShoppingList not found");
         }
         ShoppingList shoppingListToSave =  listOptional.get();
-        shoppingListToSave.setOpen(shoppingList.isOpen());
-        shoppingListToSave.setUpdateAt(LocalDateTime.now());
+        shoppingListToSave.setUpdatedAt(LocalDateTime.now());
         shoppingListToSave.setDescription(shoppingList.getDescription());
         shoppingListToSave.setSupermarket(shoppingList.getSupermarket());
         this.shoppingListRepository.save(shoppingListToSave);
@@ -82,7 +80,7 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
 
         EnumShoppingListSearch search = EnumShoppingListSearch.find(isNotNull(params.get(DESCRIPTION)),
                 isNotNull(params.get(USER_ID)),
-                isNotNull(params.get(SHOPPING_LIST_IS_OPEN)));
+                isNotNull(params.get(SHOPPING_LIST_STATUS)));
 
         final SearchBehavior searchBehavior = search.getSearchBehavior();
         Page<ShoppingListDto> page = searchBehavior.searchPage(this.shoppingListRepository, params);

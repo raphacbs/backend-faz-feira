@@ -3,8 +3,6 @@ package com.coelho.fazfeira.behavior.item;
 import com.coelho.fazfeira.behavior.SearchBehavior;
 import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.model.Item;
-import com.coelho.fazfeira.model.Product;
-import com.coelho.fazfeira.model.ShoppingList;
 import com.coelho.fazfeira.repository.ItemRepository;
 import org.springframework.data.domain.Page;
 
@@ -15,7 +13,7 @@ public class ItemSearchByProductDesc implements SearchBehavior<Item, ItemReposit
     @Override
     public Page<Item> searchPage(ItemRepository repository, Map<String, String> params) {
         UUID shoppingListId = UUID.fromString(params.get(Params.ITEM_SHOPPING_LIST_ID));
-        String productDesc = params.get(Params.ITEM_PRODUCT_DESC);
+        String productDesc = params.get(Params.PARAM_PRODUCT_DESC);
         return repository.findByShoppingListIdAndProductDesc(getPageable(params),
                 shoppingListId,
                 productDesc);

@@ -3,11 +3,8 @@ package com.coelho.fazfeira.behavior.enums;
 import com.coelho.fazfeira.behavior.SearchBehavior;
 import com.coelho.fazfeira.behavior.shoppinglist.ShoppingSearchByDescription;
 import com.coelho.fazfeira.behavior.shoppinglist.ShoppingSearchByUser;
-import com.coelho.fazfeira.behavior.shoppinglist.ShoppingSearchIsOpenAndDes;
-import com.coelho.fazfeira.behavior.shoppinglist.ShoppingSearchIsOpenAndUser;
-import com.coelho.fazfeira.behavior.supermarket.SupermarketSearchAPI;
-import com.coelho.fazfeira.behavior.supermarket.SupermarketSearchByLonLat;
-import com.coelho.fazfeira.behavior.supermarket.SupermarketSearchByName;
+import com.coelho.fazfeira.behavior.shoppinglist.ShoppingSearchDescAndStatus;
+import com.coelho.fazfeira.behavior.shoppinglist.ShoppingSearchUserAndStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,24 +12,24 @@ import lombok.Getter;
 @Getter
 public enum EnumShoppingListSearch {
     BY_DESCRIPTION(true, true, false, new ShoppingSearchByDescription()),
-    BY_IS_OPEN_DESCRIPTION(true, true, true,new ShoppingSearchIsOpenAndDes()),
-    BY_IS_OPEN_USER(false, true,true, new ShoppingSearchIsOpenAndUser()),
+    BY_DESCRIPTION_STATUS(true, true, true, new ShoppingSearchDescAndStatus()),
+    BY_STATUS_STATUS(false, true, true, new ShoppingSearchUserAndStatus()),
     BY_USER(false, true, false, new ShoppingSearchByUser());
 
     private final boolean descriptionParam;
     private final boolean userIdParam;
-    private final boolean isOpenParam;
+    private final boolean statusParam;
 
 
     private final SearchBehavior searchBehavior;
 
     public static EnumShoppingListSearch find(boolean descriptionParam,
                                               boolean userIdParam,
-                                              boolean isOpenParam) {
+                                              boolean statusParam) {
         for (EnumShoppingListSearch elem : values()) {
             if (elem.descriptionParam == descriptionParam &&
                     elem.userIdParam == userIdParam &&
-                    elem.isOpenParam == isOpenParam) {
+                    elem.statusParam == statusParam) {
                 return elem;
             }
         }

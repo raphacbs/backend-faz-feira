@@ -27,7 +27,7 @@ public class SupermarketSearchAPI implements SearchBehavior<Supermarket, Superma
         String apiKey = System.getenv("X_API_PLACE_TOKEN");
         String latitude = params.get(SUPERMARKET_LATITUDE);
         String longitude = params.get(SUPERMARKET_LONGITUDE);
-        double radius =Double.parseDouble(String.valueOf(params.get(SUPERMARKET_RADIUS)));
+        String radius =String.valueOf(params.get(SUPERMARKET_RADIUS));
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<Void> httpEntity = new HttpEntity<>(headers);

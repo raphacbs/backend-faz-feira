@@ -62,13 +62,11 @@ public interface ShoppingListMapper {
     ShoppingList shoppingListDtoToShoppingList(ShoppingListDto shoppingListDto);
 
     @Mapping(source = "supermarketId", target = "supermarket.id")
-    @Mapping(source = "open", target = "isOpen")
     ShoppingList shoppingListRequestToShoppingList(ShoppingListRequest shoppingListRequest);
 
     List<ShoppingList> shoppingListDtoToShoppingList(List<ShoppingListDto> shoppingListDto);
 
     @Mapping(source = "supermarket.id", target = "supermarketId")
-    @Mapping(source = "open", target = "isOpen")
     ShoppingListDto shoppingListToShoppingListDto(ShoppingList shoppingList);
 
     List<ShoppingListDto> shoppingListToShoppingListDto(List<ShoppingList> shoppingList);
@@ -78,6 +76,9 @@ public interface ShoppingListMapper {
     ShoppingList updateShoppingListFromShoppingListDto(ShoppingListDto shoppingListDto, @MappingTarget ShoppingList shoppingList);
 
     default UUID map(String value){
+        if(value == null){
+            return null;
+        }
         return UUID.fromString(value);
     }
 

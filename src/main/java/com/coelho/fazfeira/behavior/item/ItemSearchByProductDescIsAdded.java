@@ -13,7 +13,7 @@ public class ItemSearchByProductDescIsAdded implements SearchBehavior<Item, Item
     @Override
     public Page<Item> searchPage(ItemRepository repository, Map<String, String> params) {
         UUID shoppingListId = UUID.fromString(params.get(Params.ITEM_SHOPPING_LIST_ID));
-        String productDesc = params.get(Params.ITEM_PRODUCT_DESC);
+        String productDesc = params.get(Params.PARAM_PRODUCT_DESC);
         boolean isAdded = Boolean.parseBoolean(String.valueOf(params.get(Params.ITEM_IS_ADDED)));
         return repository.findByShoppingListIdAndProductDescAndIsAdded(getPageable(params),
                 shoppingListId,
