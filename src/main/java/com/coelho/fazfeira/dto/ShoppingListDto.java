@@ -19,6 +19,7 @@ public class ShoppingListDto implements Serializable {
     private UUID id;
     private String description;
     private UUID supermarketId;
+    private String supermarketName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String status;

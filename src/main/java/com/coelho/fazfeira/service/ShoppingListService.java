@@ -8,6 +8,7 @@ import com.coelho.fazfeira.dto.ShoppingListDto;
 import com.coelho.fazfeira.dto.ShoppingListRequest;
 import com.coelho.fazfeira.excepitonhandler.EntityNotExistException;
 import com.coelho.fazfeira.mapper.ShoppingListMapper;
+import com.coelho.fazfeira.model.Item;
 import com.coelho.fazfeira.model.ShoppingList;
 import com.coelho.fazfeira.model.User;
 import com.coelho.fazfeira.repository.ShoppingListRepository;
@@ -18,9 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.coelho.fazfeira.constants.Params.*;
@@ -40,6 +44,9 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
 
     @Autowired
     private InputValidator<ShoppingListRequest> inputValidator;
+
+    @Autowired
+    private ItemService itemService;
 
 
     @Override
@@ -91,7 +98,7 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
 
     private UUID getUserId() {
         Map<String, String> map = (Map<String, String>) request.getAttribute("claims");
-        return UUID.fromString(map.get("sub"));
+        return UUID.fromString(map.get("id"));
     }
 
     @Override
@@ -100,7 +107,26 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
         if(shoppingListOptional.isEmpty()){
             return Optional.empty();
         }else{
-            return Optional.of(this.shoppingListMapper.shoppingListToShoppingListDto(shoppingListOptional.get()));
+            final ShoppingListDto shoppingListDto = this.shoppingListMapper
+                    .shoppingListToShoppingListDto(shoppingListOptional.get());
+            ShoppingListDto.ItemsInfo itemsInfo = new ShoppingListDto.ItemsInfo();
+            final Set<Item> items = shoppingListOptional.get().getItems();
+            double plannedTotalValue = BigDecimal.valueOf(items.stream().mapToDouble(Item::getPrice).sum())
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double totalValueAdded = BigDecimal.valueOf(items.stream().mapToDouble(item ->
+                            item.isAdded() ? item.getPrice() : 0).sum())
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            int quantityPlannedProduct = items.stream().mapToInt(Item::getQuantity).sum();
+            int quantityAddedProduct = items.stream().mapToInt(item -> item.isAdded() ? item.getQuantity() : 0).sum();
+
+            itemsInfo.setPlannedTotalValue(plannedTotalValue);
+            itemsInfo.setQuantityPlannedProduct(quantityPlannedProduct);
+            itemsInfo.setTotalValueAdded(totalValueAdded);
+            itemsInfo.setQuantityAddedProduct(quantityAddedProduct);
+            shoppingListDto.setItemsInfo(itemsInfo);
+
+            return Optional.of(shoppingListDto);
         }
     }
 

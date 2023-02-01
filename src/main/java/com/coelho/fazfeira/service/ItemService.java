@@ -108,6 +108,9 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         final Item item = this.itemMapper.updateItemFromItemDto(itemDto, itemOptional.get());
 
         item.setUpdatedAt(LocalDateTime.now());
+        double newPrice = BigDecimal.valueOf(item.getPerUnit() * item.getQuantity())
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        item.setPrice(newPrice);
 
         this.itemRepository.save(item);
 
@@ -165,6 +168,6 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
     private UUID getUserId() {
         Map<String, String> map = (Map<String, String>) request.getAttribute("claims");
-        return UUID.fromString(map.get("sub"));
+        return UUID.fromString(map.get("id"));
     }
 }
