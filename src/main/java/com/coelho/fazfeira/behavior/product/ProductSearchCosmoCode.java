@@ -5,6 +5,7 @@ import com.coelho.fazfeira.dto.ProductCosmoDto;
 import com.coelho.fazfeira.dto.ProductCosmoList;
 import com.coelho.fazfeira.dto.ProductDto;
 import com.coelho.fazfeira.mapper.ProductMapper;
+import com.coelho.fazfeira.model.PriceHistory;
 import com.coelho.fazfeira.model.Product;
 import com.coelho.fazfeira.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +55,7 @@ public class ProductSearchCosmoCode implements SearchBehavior<Product, ProductRe
             product.setCreatedAt(LocalDateTime.now());
             product.setUpdateAt(LocalDateTime.now());
             repository.save(product);
+            product.setPriceHistories(new HashSet<PriceHistory>());
 
             return new PageImpl<>(List.of(product));
 
