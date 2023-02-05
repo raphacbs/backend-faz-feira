@@ -119,6 +119,8 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
         this.itemRepository.save(item);
         this.priceHistoryRepository.save(priceHistory);
+        shoppingList.setUpdatedAt(LocalDateTime.now());
+        this.shoppingListRepository.save(shoppingList);
 
         return this.itemMapper.itemToItemDto(item);
     }
@@ -148,6 +150,9 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         item.setPrice(newPrice);
 
         this.itemRepository.save(item);
+        ShoppingList shoppingList = shoppingListPage.get();
+        shoppingList.setUpdatedAt(LocalDateTime.now());
+        this.shoppingListRepository.save(shoppingList);
 
         Optional<PriceHistory> optionalPriceHistory = this.priceHistoryRepository.findByProductAndItemAndShoppingList(
                 item.getProduct(),
@@ -200,6 +205,9 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
             this.priceHistoryRepository.save(price);
         }
         this.itemRepository.delete(item);
+        ShoppingList shoppingList = shoppingListPage.get();
+        shoppingList.setUpdatedAt(LocalDateTime.now());
+        this.shoppingListRepository.save(shoppingList);
 
 
     }
