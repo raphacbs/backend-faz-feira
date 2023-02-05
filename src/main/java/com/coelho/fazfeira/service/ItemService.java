@@ -11,6 +11,7 @@ import com.coelho.fazfeira.excepitonhandler.ShoppingListStatusException;
 import com.coelho.fazfeira.mapper.ItemMapper;
 import com.coelho.fazfeira.model.*;
 import com.coelho.fazfeira.repository.ItemRepository;
+import com.coelho.fazfeira.repository.PriceHistoryRepository;
 import com.coelho.fazfeira.repository.ShoppingListRepository;
 import com.coelho.fazfeira.validation.InputValidator;
 import org.slf4j.Logger;
@@ -22,9 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static com.coelho.fazfeira.util.Nullables.isNotNull;
 
@@ -32,6 +32,9 @@ import static com.coelho.fazfeira.util.Nullables.isNotNull;
 public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private PriceHistoryRepository priceHistoryRepository;
 
     @Autowired
     private ShoppingListRepository shoppingListRepository;
@@ -55,36 +58,68 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
                 .findByIdAndUser(itemDto.getShoppingList().getId(),
                         user);
-        if(shoppingListPage.isEmpty()){
+        if (shoppingListPage.isEmpty()) {
             logger.warn("Shopping list does not exist for this user");
             throw new NotFoundException("Shopping list does not exist for this user");
         }
 
-        if(shoppingListPage.get().getStatus() == ShoppingListStatus.READY){
+        if (shoppingListPage.get().getStatus() == ShoppingListStatus.READY) {
             logger.warn("You cannot add items to lists with READY status.");
             throw new ShoppingListStatusException("You cannot add items to lists with READY status.");
         }
 
-        ShoppingList shoppingList = ShoppingList.builder().id(itemDto.getShoppingList().getId()).build();
+        ShoppingList shoppingList = shoppingListPage.get();
         Product product = item.getProduct();
         final Optional<Item> itemPage = this.itemRepository.findByShoppingListAndProduct(
                 shoppingList,
                 product);
 
-        if(itemPage.isPresent()){
+        PriceHistory priceHistory = null;
+
+        if (itemPage.isPresent()) {
             Item itemSaved = itemPage.get();
             final Integer quantity = itemSaved.getQuantity();
             itemSaved.setQuantity(quantity + itemDto.getQuantity());
             itemSaved.setPerUnit(itemDto.getPerUnit());
+            itemSaved.setUpdatedAt(LocalDateTime.now());
 
             double newPrice = BigDecimal.valueOf(itemSaved.getPerUnit() * itemSaved.getQuantity())
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
 
             itemSaved.setPrice(newPrice);
             item = itemSaved;
+
+            Optional<PriceHistory> optionalPriceHistory = this.priceHistoryRepository.findByProductAndItemAndShoppingList(
+                    product,
+                    itemSaved,
+                    shoppingList);
+
+
+            if (optionalPriceHistory.isPresent()) {
+                priceHistory = optionalPriceHistory.get();
+                priceHistory.setUpdatedAt(LocalDateTime.now());
+                priceHistory.setProduct(item.getProduct());
+                priceHistory.setPrice(item.getPerUnit());
+                priceHistory.setItem(item);
+                priceHistory.setSupermarket(shoppingList.getSupermarket());
+                priceHistory.setShoppingList(shoppingList);
+            }
+
+        } else {
+            priceHistory = PriceHistory.builder()
+                    .createdAt(LocalDateTime.now())
+                    .product(item.getProduct())
+                    .shoppingList(shoppingList)
+                    .updatedAt(LocalDateTime.now())
+                    .supermarket(shoppingList.getSupermarket())
+                    .price(item.getPerUnit())
+                    .item(item)
+                    .build();
         }
 
         this.itemRepository.save(item);
+        this.priceHistoryRepository.save(priceHistory);
+
         return this.itemMapper.itemToItemDto(item);
     }
 
@@ -93,14 +128,14 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
         User user = User.builder().id(getUserId()).build();
         final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
-                .findByIdAndUser(itemDto.getShoppingList().getId(),user);
-        if(shoppingListPage.isEmpty()){
+                .findByIdAndUser(itemDto.getShoppingList().getId(), user);
+        if (shoppingListPage.isEmpty()) {
             logger.warn("Shopping list does not exist for this user");
             throw new NotFoundException("Shopping list does not exist for this user");
         }
 
         final Optional<Item> itemOptional = this.itemRepository.findById(itemDto.getId());
-        if(itemOptional.isEmpty()){
+        if (itemOptional.isEmpty()) {
             logger.warn("Item does not exist");
             throw new NotFoundException("Item does not exist");
         }
@@ -114,6 +149,24 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
         this.itemRepository.save(item);
 
+        Optional<PriceHistory> optionalPriceHistory = this.priceHistoryRepository.findByProductAndItemAndShoppingList(
+                item.getProduct(),
+                item,
+                item.getShoppingList());
+
+        if (optionalPriceHistory.isPresent()) {
+            PriceHistory priceHistory = optionalPriceHistory.get();
+            priceHistory.setUpdatedAt(LocalDateTime.now());
+            priceHistory.setProduct(item.getProduct());
+            priceHistory.setPrice(item.getPerUnit());
+            priceHistory.setItem(item);
+            priceHistory.setSupermarket(item.getShoppingList().getSupermarket());
+            priceHistory.setShoppingList(item.getShoppingList());
+
+            this.priceHistoryRepository.save(priceHistory);
+        }
+
+
         return this.itemMapper.itemToItemDto(item);
     }
 
@@ -121,7 +174,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
     public void delete(UUID id) {
 
         final Optional<Item> itemOptional = this.itemRepository.findById(id);
-        if(itemOptional.isEmpty()){
+        if (itemOptional.isEmpty()) {
             logger.warn("Item does not exist");
             throw new NotFoundException("Item does not exist");
         }
@@ -131,11 +184,21 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
                 .findByIdAndUser(item.getShoppingList().getId(),
                         user);
-        if(shoppingListPage.isEmpty()){
+        if (shoppingListPage.isEmpty()) {
             logger.warn("Shopping list does not exist for this user");
             throw new NotFoundException("Shopping list does not exist for this user");
         }
 
+        Optional<PriceHistory> optionalPriceHistory = this.priceHistoryRepository.findByProductAndItemAndShoppingList(
+                item.getProduct(),
+                item,
+                item.getShoppingList());
+
+        if (optionalPriceHistory.isPresent()) {
+            PriceHistory price = optionalPriceHistory.get();
+            price.setItem(null);
+            this.priceHistoryRepository.save(price);
+        }
         this.itemRepository.delete(item);
 
 
@@ -148,7 +211,28 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
                 isNotNull(params.get(Params.ITEM_IS_ADDED)));
 
         final SearchBehavior searchBehavior = enumItemSearch.getSearchBehavior();
-        Page<Item> page =  searchBehavior.searchPage(this.itemRepository, params);
+        Page<Item> page = searchBehavior.searchPage(this.itemRepository, params);
+
+        if (!page.isEmpty()) {
+            final Map<String, String> defaultParams = Params.getDefaultParams();
+            defaultParams.put("pageSize", "5");
+            defaultParams.put("sortBy", "updatedAt");
+            for (Item _item : page.getContent()) {
+                final List<PriceHistory> pageHistory = this.priceHistoryRepository.findWithProductNoItem(
+                        _item.getProduct().getCode(),
+                        _item.getId(),
+                        5);
+
+                if(pageHistory.isEmpty()){
+                    _item.getProduct().setPriceHistories(Set.of());
+                }else{
+                    _item.getProduct().setPriceHistories(Set.of(pageHistory.toArray(new PriceHistory[0])));
+                }
+            }
+
+
+
+        }
 
         return this.itemMapper.pageItemToResponseList(page, params);
     }

@@ -1,11 +1,9 @@
 package com.coelho.fazfeira.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,7 +13,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PriceHistory {
+@Builder
+public class PriceHistory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -32,5 +31,11 @@ public class PriceHistory {
     private LocalDateTime createdAt;
     @Column(name = "updated_at",nullable = false)
     private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "shopping_list_id")
+    private ShoppingList shoppingList;
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
 
 }

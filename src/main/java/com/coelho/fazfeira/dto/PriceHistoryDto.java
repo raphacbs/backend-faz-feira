@@ -1,6 +1,7 @@
 package com.coelho.fazfeira.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PriceHistoryDto implements Serializable {
     private UUID id;
     @NotNull(message = "price must not be null")
@@ -29,6 +31,7 @@ public class PriceHistoryDto implements Serializable {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class ProductResponse implements Serializable {
         @NotNull(message = "product code must not be null")
         @NotBlank(message = "product code must not be blank")
@@ -39,11 +42,14 @@ public class PriceHistoryDto implements Serializable {
         private LocalDateTime createdAt;
         private LocalDateTime updateAt;
         private UnitDto unit;
+        private ShoppingListDto shoppingList;
+        private ItemDto item;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class SupermarketResponse implements Serializable {
         @NotNull(message = "supermarket id must not be null")
         private UUID id;
