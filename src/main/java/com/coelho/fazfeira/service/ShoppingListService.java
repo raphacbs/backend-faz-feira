@@ -48,13 +48,16 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
     @Autowired
     private ItemService itemService;
 
+    @Autowired
+    private  UserService userService;
+
 
     @Override
     public ShoppingListDto create(ShoppingListRequest obj) {
         final ShoppingList shoppingList = validateAndConvert(obj);
         shoppingList.setCreatedAt(LocalDateTime.now());
         shoppingList.setUpdatedAt(LocalDateTime.now());
-        shoppingList.setUser(User.builder().id(getUserId()).build());
+        shoppingList.setUser(User.builder().id(userService.getLoggedUserId()).build());
         this.shoppingListRepository.save(shoppingList);
         return this.shoppingListMapper.shoppingListToShoppingListDto(shoppingList);
     }
@@ -83,7 +86,7 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
     @Override
     public ResponseList<ShoppingListDto> getByParams(Map<String, String> params) {
 
-        params.put(USER_ID, getUserId().toString());
+        params.put(USER_ID, userService.getLoggedUserId().toString());
 
         EnumShoppingListSearch search = EnumShoppingListSearch.find(isNotNull(params.get(DESCRIPTION)),
                 isNotNull(params.get(USER_ID)),
@@ -94,11 +97,6 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
 
         return shoppingListMapper.pageSupermarketToResponseList(searchBehavior.searchPage(this.shoppingListRepository, params),
                 params);
-    }
-
-    private UUID getUserId() {
-        Map<String, String> map = (Map<String, String>) request.getAttribute("claims");
-        return UUID.fromString(map.get("id"));
     }
 
     @Override

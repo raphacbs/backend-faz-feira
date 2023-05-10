@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = {"*", "http://localhost:19006"}, maxAge = 3600)
 @RequestMapping("api/v1/products")
 public class ProductController {
 
@@ -51,7 +51,10 @@ public class ProductController {
         params.put(Params.SORT_BY, sortBy);
         params.put(Params.SORT_DIR, sortDir);
 
-        return ResponseEntity.ok(this.productService.getByParams(params));
+        return ResponseEntity
+                .ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .body(this.productService.getByParams(params));
     }
     @GetMapping(path = "/{id}")
     public ResponseEntity<ProductDto> getById(@PathVariable("id") String id) {

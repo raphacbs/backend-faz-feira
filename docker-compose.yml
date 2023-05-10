@@ -1,0 +1,57 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: faz-feira-local
+      POSTGRES_TZ: America/Sao_Paulo
+      TZ: America/Sao_Paulo
+    container_name: faz-feira-bd
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./target/classes/01-ddl.sql:/docker-entrypoint-initdb.d/01-ddl.sql
+      - ./target/classes/01-dml.sql:/docker-entrypoint-initdb.d/01-dml.sql
+    networks:
+      - my-network
+  app:
+    image: openjdk:17
+    volumes:
+      - ./target/app-faz-feira.jar:/app/app-faz-feira.jar
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db/faz-feira-local
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      X_API_PLACE_TOKEN: f081221cb8b54a0d948712d9b9613184
+      X_COSMOS_TOKEN: 3NgVloi41ez-1ae_NMyPVA
+      TZ: America/Sao_Paulo
+    command: ["java", "-jar", "/app/app-faz-feira.jar"]
+    ports:
+      - "8080:8080"
+    container_name: faz-feira-app
+    networks:
+      - my-network
+  app2:
+    image: openjdk:17
+    volumes:
+      - ./target/faz-feira-authenticator.jar:/app/faz-feira-authenticator.jar
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db/faz-feira-local
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      TZ: America/Sao_Paulo
+    command: [ "java", "-jar", "/app/faz-feira-authenticator.jar" ]
+    ports:
+      - "8085:8085"
+    container_name: faz-feira-auth
+    networks:
+      - my-network
+networks:
+  my-network:
+    driver: bridge

@@ -49,12 +49,16 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
     @Autowired
     HttpServletRequest request;
 
+
+    @Autowired
+    private  UserService userService;
+
     @Override
     public ItemDto create(ItemDto itemDto) {
         Item item = validateAndConvert(itemDto);
         item.setCreatedAt(LocalDateTime.now());
         item.setUpdatedAt(LocalDateTime.now());
-        User user = User.builder().id(getUserId()).build();
+        User user = User.builder().id(userService.getLoggedUserId()).build();
         final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
                 .findByIdAndUser(itemDto.getShoppingList().getId(),
                         user);
@@ -128,7 +132,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
     @Override
     public ItemDto update(ItemDto itemDto) {
 
-        User user = User.builder().id(getUserId()).build();
+        User user = User.builder().id(userService.getLoggedUserId()).build();
         final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
                 .findByIdAndUser(itemDto.getShoppingList().getId(), user);
         if (shoppingListPage.isEmpty()) {
@@ -185,7 +189,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         }
         Item item = itemOptional.get();
 
-        User user = User.builder().id(getUserId()).build();
+        User user = User.builder().id(userService.getLoggedUserId()).build();
         final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
                 .findByIdAndUser(item.getShoppingList().getId(),
                         user);
@@ -258,8 +262,4 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         return item;
     }
 
-    private UUID getUserId() {
-        Map<String, String> map = (Map<String, String>) request.getAttribute("claims");
-        return UUID.fromString(map.get("id"));
-    }
 }

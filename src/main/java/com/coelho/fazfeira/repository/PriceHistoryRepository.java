@@ -25,14 +25,6 @@ public interface PriceHistoryRepository extends JpaRepository<PriceHistory, UUID
 
     Page<PriceHistory> findByProductAndItemNotAndShoppingList(Pageable pageable, Product product, Item item, ShoppingList list);
 
-    String HAVERSINE_FORMULA = "(6371 * acos(cos(radians(:latitude)) * cos(radians(s.latitude)) *" +
-            " cos(radians(s.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(s.latitude))))";
-
-//    @Query("select ph from PriceHistory ph " +
-//            " where ph.product.code = :productCode " +
-//            "and (ph.item.id  <> :itemId " +
-//            "or ph.item.id is null) " +
-//            "order by ph.updatedAt desc ")
     @Query(value ="select * from price_history ph " +
             "where  ph.product_code  = :productCode " +
             "and (ph.item_id  <> :itemId " +
