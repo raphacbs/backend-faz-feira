@@ -32,9 +32,9 @@ public class SwaggerConfig {
                                 .name(HttpHeaders.AUTHORIZATION)))
 
                 .info(new Info()
-                        .title("iDelivery")
+                        .title("Faz Feira API")
                         .version("1.0.0")
-                        .description("APIs para back-end do iDeliver"))
+                        .description("APIs para back-end do Faz Feira"))
                 .servers(Arrays.asList(
                         new Server().url(serverUrl)));
     }
