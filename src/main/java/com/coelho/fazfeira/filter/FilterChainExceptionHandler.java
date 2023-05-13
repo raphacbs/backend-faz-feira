@@ -1,6 +1,5 @@
 package com.coelho.fazfeira.filter;
 
-import ch.qos.logback.core.util.ContentTypeUtil;
 import com.coelho.fazfeira.excepitonhandler.MessageExceptionHandler;
 import com.coelho.fazfeira.excepitonhandler.TokenException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,12 +38,12 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (TokenException | ExpiredJwtException  e) {
             MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.UNAUTHORIZED.value(),  e.getMessage());
-            response.setStatus(error.getStatus());
+            response.setStatus(error.getCode());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write(convertObjectToJson(error));
         } catch (RuntimeException e) {
             MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.INTERNAL_SERVER_ERROR.value(),  e.getMessage());
-            response.setStatus(error.getStatus());
+            response.setStatus(error.getCode());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write(convertObjectToJson(error));
         }

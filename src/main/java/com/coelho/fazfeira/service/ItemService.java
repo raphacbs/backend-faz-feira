@@ -1,11 +1,13 @@
 package com.coelho.fazfeira.service;
 
+import com.coelho.fazfeira.base.BusinessCode;
 import com.coelho.fazfeira.behavior.Pageable;
 import com.coelho.fazfeira.behavior.SearchBehavior;
 import com.coelho.fazfeira.behavior.enums.EnumItemSearch;
 import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.dto.ItemDto;
 import com.coelho.fazfeira.dto.ResponseList;
+import com.coelho.fazfeira.excepitonhandler.BusinessException;
 import com.coelho.fazfeira.excepitonhandler.NotFoundException;
 import com.coelho.fazfeira.excepitonhandler.ShoppingListStatusException;
 import com.coelho.fazfeira.mapper.ItemMapper;
@@ -24,7 +26,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.coelho.fazfeira.util.Nullables.isNotNull;
 
@@ -64,7 +65,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
                         user);
         if (shoppingListPage.isEmpty()) {
             logger.warn("Shopping list does not exist for this user");
-            throw new NotFoundException("Shopping list does not exist for this user");
+            throw new BusinessException(BusinessCode.SHOPPING_LIST_NOT_EXIST_FOR_USER);
         }
 
         if (shoppingListPage.get().getStatus() == ShoppingListStatus.READY) {

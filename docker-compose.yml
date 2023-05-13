@@ -35,23 +35,6 @@ services:
     container_name: faz-feira-app
     networks:
       - my-network
-  app2:
-    image: openjdk:17
-    volumes:
-      - ./target/faz-feira-authenticator.jar:/app/faz-feira-authenticator.jar
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db/faz-feira-local
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password
-      TZ: America/Sao_Paulo
-    command: [ "java", "-jar", "/app/faz-feira-authenticator.jar" ]
-    ports:
-      - "8085:8085"
-    container_name: faz-feira-auth
-    networks:
-      - my-network
 networks:
   my-network:
     driver: bridge
