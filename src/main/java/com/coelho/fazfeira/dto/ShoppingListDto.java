@@ -14,8 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ShoppingListDto implements Serializable {
-    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$", message = "Shopping list id with invalid format")
+public class ShoppingListDto implements Serializable, Dto {
     private UUID id;
     private String description;
     private UUID supermarketId;

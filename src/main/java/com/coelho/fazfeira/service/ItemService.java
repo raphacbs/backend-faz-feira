@@ -70,7 +70,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
         if (shoppingListPage.get().getStatus() == ShoppingListStatus.READY) {
             logger.warn("You cannot add items to lists with READY status.");
-            throw new ShoppingListStatusException("You cannot add items to lists with READY status.");
+            throw new BusinessException(BusinessCode.SHOPPING_LIST_STATUS_NOT_ADD_ITEMS);
         }
 
         ShoppingList shoppingList = shoppingListPage.get();

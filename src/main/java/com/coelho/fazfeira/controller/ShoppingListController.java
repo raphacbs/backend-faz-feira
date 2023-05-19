@@ -1,25 +1,31 @@
 package com.coelho.fazfeira.controller;
 
 import com.coelho.fazfeira.constants.Params;
+import com.coelho.fazfeira.dto.ItemDto;
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.dto.ShoppingListDto;
-import com.coelho.fazfeira.dto.ShoppingListRequest;
-import com.coelho.fazfeira.dto.SupermarketDto;
+import com.coelho.fazfeira.excepitonhandler.MessageExceptionHandler;
+import com.coelho.fazfeira.inputs.ShoppingListInput;
 import com.coelho.fazfeira.service.ShoppingListService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.coelho.fazfeira.constants.Params.*;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("api/v1/shopping-lists")
+@Tag(name = "ShoppingList operations")
 public class ShoppingListController {
 
     private final ShoppingListService shoppingListService;
@@ -28,6 +34,31 @@ public class ShoppingListController {
         this.shoppingListService = shoppingListService;
     }
 
+
+    @Operation(description = "Get all the ShoppingLists by user")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns a list of the user's shopping lists",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = List.class, subTypes = {ShoppingListDto.class})
+                    )
+            ),
+//            @ApiResponse(
+//                    responseCode = "400",
+//                    description = "Bad Request",
+//                    content = {
+//                            @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = MessageExceptionHandler.class),
+//                                    examples = {
+//                                            @ExampleObject(name = "300010",value = "{\"code\": 3000010, \"message\": \"Not found supermarket with Id\"}")
+//                                    }
+//                            ),
+//                    }
+//            )
+    })
     @GetMapping
     public ResponseEntity<ResponseList<ShoppingListDto>> get(
             @RequestParam(value = SHOPPING_LIST_SUPERMARKET_ID, required = false) String supermarketId,
@@ -58,14 +89,66 @@ public class ShoppingListController {
                 );
     }
 
+    @Operation(description = "Create a ShoppingList")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "ShoppingList created",
+
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ShoppingListDto.class)
+
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = MessageExceptionHandler.class),
+                                    examples = {
+                                            @ExampleObject(name = "200010",value = "{\"code\": 2000010, \"message\": \"Shopping list does not exist for this user\"}")
+                                    }
+                            ),
+                    }
+            )
+    })
     @PostMapping
-    public ResponseEntity<ShoppingListDto> create(@RequestBody ShoppingListRequest shoppingListRequest){
-        return new ResponseEntity<>(this.shoppingListService.create(shoppingListRequest), HttpStatus.CREATED);
+    public ResponseEntity<ShoppingListDto> create(@RequestBody ShoppingListInput shoppingListInput){
+        return new ResponseEntity<>(this.shoppingListService.create(shoppingListInput), HttpStatus.CREATED);
     }
 
 
+    @Operation(description = "Change a ShoppingList")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ShoppingList changed",
+
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ShoppingListDto.class)
+
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = MessageExceptionHandler.class),
+                                    examples = {
+                                            @ExampleObject(name = "300010",value = "{\"code\": 3000010, \"message\": \"Not found supermarket with Id\"}")
+                                    }
+                            ),
+                    }
+            )
+    })
     @PutMapping
-    public ResponseEntity<ShoppingListDto> update(@RequestBody ShoppingListRequest shoppingListRequest){
-        return new ResponseEntity<>(this.shoppingListService.update(shoppingListRequest), HttpStatus.OK);
+    public ResponseEntity<ShoppingListDto> update(@RequestBody ShoppingListInput shoppingListInput){
+        return new ResponseEntity<>(this.shoppingListService.update(shoppingListInput), HttpStatus.OK);
     }
 }

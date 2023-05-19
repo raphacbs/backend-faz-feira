@@ -7,6 +7,7 @@ import com.coelho.fazfeira.excepitonhandler.MessageExceptionHandler;
 import com.coelho.fazfeira.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -47,17 +48,52 @@ public class ItemController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad Request",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageExceptionHandler.class)
-                    )
-            ),
+                    content = {
+                            @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = MessageExceptionHandler.class),
+                                examples = {
+                                        @ExampleObject(name = "200010",value = "{\"code\": 2000010, \"message\": \"Shopping list does not exist for this user\"}"),
+                                        @ExampleObject(name = "200020", value = "{\"code\": 200020, \"message\": \"You cannot add items to lists with READY status.\"}"),
+                                }
+                            ),
+                    }
+            )
+
     })
     @PostMapping
     public ResponseEntity<ItemDto> register(@RequestBody ItemDto itemDto) {
         return new ResponseEntity<>(itemService.create(itemDto), HttpStatus.CREATED);
     }
 
+    @Operation(description = "Update a item")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "item added",
+
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ItemDto.class)
+
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = MessageExceptionHandler.class),
+                                    examples = {
+                                            @ExampleObject(name = "200010",value = "{\"code\": 2000010, \"message\": \"Shopping list does not exist for this user\"}"),
+                                            @ExampleObject(name = "200020", value = "{\"code\": 200020, \"message\": \"You cannot add items to lists with READY status.\"}"),
+                                    }
+                            ),
+                    }
+            )
+
+    })
     @PutMapping
     public ResponseEntity<ItemDto> update(@RequestBody ItemDto unitRequestBody) {
         return new ResponseEntity<>(itemService.update(unitRequestBody), HttpStatus.OK);
@@ -95,7 +131,7 @@ public class ItemController {
     }
 
     @DeleteMapping(path = "/{id:^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$}")
-    public ResponseEntity remove(@PathVariable("id") UUID id){
+    public ResponseEntity remove(@PathVariable("id") UUID id) {
         this.itemService.delete(id);
         return ResponseEntity.ok().build();
     }

@@ -2,9 +2,10 @@ package com.coelho.fazfeira.mapper;
 
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.dto.ShoppingListDto;
-import com.coelho.fazfeira.dto.ShoppingListRequest;
+import com.coelho.fazfeira.inputs.ShoppingListInput;
 import com.coelho.fazfeira.model.Item;
 import com.coelho.fazfeira.model.ShoppingList;
+import com.coelho.fazfeira.model.Supermarket;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", imports = {UUID.class, Supermarket.class})
 public interface ShoppingListMapper {
     ShoppingListMapper INSTANCE = Mappers.getMapper(ShoppingListMapper.class);
 
@@ -59,10 +60,13 @@ public interface ShoppingListMapper {
     }
 
     @Mapping(source = "supermarketId", target = "supermarket.id")
+   // @Mapping(target = "supermarket.id", expression = "java(UUID.fromString(shoppingListDto.getSupermarketId()))")
     ShoppingList shoppingListDtoToShoppingList(ShoppingListDto shoppingListDto);
 
-    @Mapping(source = "supermarketId", target = "supermarket.id")
-    ShoppingList shoppingListRequestToShoppingList(ShoppingListRequest shoppingListRequest);
+//    @Mapping(source = "supermarketId", target = "supermarket.id")
+    @Mapping(target = "supermarket.id", expression = "java(UUID.fromString(shoppingListInput.getSupermarketId()))")
+
+    ShoppingList shoppingListRequestToShoppingList(ShoppingListInput shoppingListInput);
 
     List<ShoppingList> shoppingListDtoToShoppingList(List<ShoppingListDto> shoppingListDto);
 
@@ -76,7 +80,24 @@ public interface ShoppingListMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ShoppingList updateShoppingListFromShoppingListDto(ShoppingListDto shoppingListDto, @MappingTarget ShoppingList shoppingList);
 
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+   // @Mapping(source = "supermarketId", target = "supermarket.id")
+    @Mapping(target = "supermarket", expression = "java(Supermarket.builder().id(UUID.fromString(shoppingListInput.getSupermarketId())).build())")
+    @Mapping(target = "id", ignore = true)
+    void updateShoppingListFromShoppingListInput(ShoppingListInput shoppingListInput,
+                                                    @MappingTarget ShoppingList shoppingList);
+
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    // @Mapping(source = "supermarketId", target = "supermarket.id")
+    @Mapping(target = "supermarket", expression = "java(supermarket)")
+    @Mapping(target = "id", ignore = true)
+    void updateShoppingListFromShoppingListInput(ShoppingListInput shoppingListInput,
+                                                 @MappingTarget ShoppingList shoppingList,
+                                                 Supermarket supermarket);
     default UUID map(String value){
+
         if(value == null){
             return null;
         }

@@ -1,7 +1,10 @@
 package com.coelho.fazfeira.excepitonhandler;
 
 import com.coelho.fazfeira.ErrorCode;
+import com.coelho.fazfeira.handlers.actions.shoppinglist.ConvertEntityToDtoShoppingListHandler;
 import com.coelho.fazfeira.repository.ErrorCodeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,8 @@ import java.util.Optional;
 public class ControllerAdvice {
     @Autowired
     private ErrorCodeRepository errorCodeRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(ControllerAdvice.class);
 
     @ResponseBody
     @ExceptionHandler(UnitAlreadyExistException.class)
@@ -46,6 +51,7 @@ public class ControllerAdvice {
     public ResponseEntity<MessageExceptionHandler> handleException(Exception ex, WebRequest request) {
         MessageExceptionHandler errorResponse = new MessageExceptionHandler(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "unknown error");
+        logger.error("Error: ",ex);
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

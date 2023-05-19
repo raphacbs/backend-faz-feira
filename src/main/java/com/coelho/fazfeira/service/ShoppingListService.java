@@ -5,18 +5,23 @@ import com.coelho.fazfeira.behavior.SearchBehavior;
 import com.coelho.fazfeira.behavior.enums.EnumShoppingListSearch;
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.dto.ShoppingListDto;
-import com.coelho.fazfeira.dto.ShoppingListRequest;
 import com.coelho.fazfeira.excepitonhandler.EntityNotExistException;
+import com.coelho.fazfeira.flow.shoppinglist.CreateShoppingListFlowBuilder;
+import com.coelho.fazfeira.flow.shoppinglist.UpdateShoppingListFlowBuilder;
+import com.coelho.fazfeira.handlers.DefaultContext;
+import com.coelho.fazfeira.inputs.ShoppingListInput;
 import com.coelho.fazfeira.mapper.ShoppingListMapper;
 import com.coelho.fazfeira.model.Item;
 import com.coelho.fazfeira.model.ShoppingList;
-import com.coelho.fazfeira.model.User;
 import com.coelho.fazfeira.repository.ShoppingListRepository;
+import com.coelho.fazfeira.util.Converts;
 import com.coelho.fazfeira.validation.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -31,7 +36,7 @@ import static com.coelho.fazfeira.constants.Params.*;
 import static com.coelho.fazfeira.util.Nullables.isNotNull;
 
 @org.springframework.stereotype.Service
-public class ShoppingListService implements Service<ShoppingListDto, ShoppingListRequest>, Pageable {
+public class ShoppingListService implements Service<ShoppingListDto, ShoppingListInput>, Pageable {
 
     private final Logger logger = LoggerFactory.getLogger(ShoppingListService.class);
     private final ShoppingListMapper shoppingListMapper = ShoppingListMapper.INSTANCE;
@@ -43,39 +48,36 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
     private ShoppingListRepository shoppingListRepository;
 
     @Autowired
-    private InputValidator<ShoppingListRequest> inputValidator;
+    private InputValidator<ShoppingListInput> inputValidator;
 
     @Autowired
     private ItemService itemService;
 
     @Autowired
     private  UserService userService;
+    @Autowired
+    private CreateShoppingListFlowBuilder createShoppingListFlowBuilder;
+
+    @Autowired
+    private UpdateShoppingListFlowBuilder updateShoppingListFlowBuilder;
 
 
     @Override
-    public ShoppingListDto create(ShoppingListRequest obj) {
-        final ShoppingList shoppingList = validateAndConvert(obj);
-        shoppingList.setCreatedAt(LocalDateTime.now());
-        shoppingList.setUpdatedAt(LocalDateTime.now());
-        shoppingList.setUser(User.builder().id(userService.getLoggedUserId()).build());
-        this.shoppingListRepository.save(shoppingList);
-        return this.shoppingListMapper.shoppingListToShoppingListDto(shoppingList);
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ShoppingListDto create(ShoppingListInput obj) {
+        DefaultContext context = DefaultContext.builder().build();
+        context.setShoppingListInput(obj);
+        createShoppingListFlowBuilder.create(context).build().run();
+        return context.getShoppingListDto();
     }
 
     @Override
-    public ShoppingListDto update(ShoppingListRequest obj) {
-        final ShoppingList shoppingList = validateAndConvert(obj);
-        final Optional<ShoppingList> listOptional = this.shoppingListRepository.findById(shoppingList.getId());
-        if(listOptional.isEmpty()){
-            logger.warn("ShoppingList not found");
-            throw new EntityNotExistException("ShoppingList not found");
-        }
-        ShoppingList shoppingListToSave =  listOptional.get();
-        shoppingListToSave.setUpdatedAt(LocalDateTime.now());
-        shoppingListToSave.setDescription(shoppingList.getDescription());
-        shoppingListToSave.setSupermarket(shoppingList.getSupermarket());
-        this.shoppingListRepository.save(shoppingListToSave);
-        return this.shoppingListMapper.shoppingListToShoppingListDto(shoppingListToSave);
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ShoppingListDto update(ShoppingListInput obj) {
+        DefaultContext context = DefaultContext.builder().build();
+        context.setShoppingListInput(obj);
+        updateShoppingListFlowBuilder.create(context).build().run();
+        return context.getShoppingListDto();
     }
 
     @Override
@@ -101,6 +103,14 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
 
     @Override
     public Optional<ShoppingListDto> getById(UUID id) {
+        ShoppingListInput shoppingListInput = ShoppingListInput.builder()
+                .id(Converts.asString(id))
+                .build();
+
+        DefaultContext context = DefaultContext.builder().build();
+        context.setShoppingListInput(shoppingListInput);
+
+
         final Optional<ShoppingList> shoppingListOptional = this.shoppingListRepository.findById(id);
         if(shoppingListOptional.isEmpty()){
             return Optional.empty();
@@ -128,10 +138,10 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
         }
     }
 
-    private ShoppingList validateAndConvert(ShoppingListRequest shoppingListRequest) {
-        inputValidator.validate(shoppingListRequest);
-        logger.debug("Preparing object conversion UnitRequestBody to Unit. {}", shoppingListRequest);
-        ShoppingList shoppingList =  this.shoppingListMapper.shoppingListRequestToShoppingList(shoppingListRequest);
+    private ShoppingList validateAndConvert(ShoppingListInput shoppingListInput) {
+        inputValidator.validate(shoppingListInput);
+        logger.debug("Preparing object conversion UnitRequestBody to Unit. {}", shoppingListInput);
+        ShoppingList shoppingList =  this.shoppingListMapper.shoppingListRequestToShoppingList(shoppingListInput);
         logger.info("Object converted successfully");
         return shoppingList;
     }
