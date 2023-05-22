@@ -10,6 +10,9 @@ import com.coelho.fazfeira.excepitonhandler.UserNotFoundException;
 import com.coelho.fazfeira.model.Role;
 import com.coelho.fazfeira.model.User;
 import com.coelho.fazfeira.repository.UserRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +35,8 @@ public class UserService {
     private JwtGenerator jwtGenerator;
 
     private UserRepository userRepository;
+
+    private Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserService(PasswordEncoder passwordEncoder,
                        JwtGenerator jwtGenerator,
@@ -64,14 +69,18 @@ public class UserService {
         final Optional<User> userOptional = userRepository.findByEmail(userRequest.getEmail());
 
         if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("Invalid email user not found");
+            String message =  MessageFormat.format("The user '{0}' not found", userRequest.getEmail());
+            logger.error(message);
+            throw new UserNotFoundException(message);
         }
 
         if (!userOptional.get().isActive()) {
-            throw new UserNotFoundException("User is not actived");
+            String message =  MessageFormat.format("User '{0}' is not actived", userRequest.getEmail());
+            logger.error(message);
+            throw new UserNotFoundException(message);
         }
 
-        boolean isValid = userOptional.get().isActive() && passwordEncoder.matches(userRequest.getPassword(), userOptional.get().getPassword());
+        boolean isValid = passwordEncoder.matches(userRequest.getPassword(), userOptional.get().getPassword());
 
         if (isValid) {
             User user = userOptional.get();
@@ -83,6 +92,7 @@ public class UserService {
                     .build();
             return Optional.ofNullable(this.jwtGenerator.generateToken(userDto));
         } else {
+            logger.error("Email or password is not valid");
             return Optional.empty();
         }
     }
