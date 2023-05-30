@@ -222,26 +222,26 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         final SearchBehavior searchBehavior = enumItemSearch.getSearchBehavior();
         Page<Item> page = searchBehavior.searchPage(this.itemRepository, params);
 
-        if (!page.isEmpty()) {
-            final Map<String, String> defaultParams = Params.getDefaultParams();
-            defaultParams.put("pageSize", "5");
-            defaultParams.put("sortBy", "updatedAt");
-            for (Item _item : page.getContent()) {
-                final List<PriceHistory> pageHistory = this.priceHistoryRepository.findWithProductNoItem(
-                        _item.getProduct().getCode(),
-                        _item.getId(),
-                        5);
-
-                if(pageHistory.isEmpty()){
-                    _item.getProduct().setPriceHistories(Set.of());
-                }else{
-                    _item.getProduct().setPriceHistories(Set.of(pageHistory.toArray(new PriceHistory[0])));
-                }
-            }
-
-
-
-        }
+//        if (!page.isEmpty()) {
+//            final Map<String, String> defaultParams = Params.getDefaultParams();
+//            defaultParams.put("pageSize", "5");
+//            defaultParams.put("sortBy", "updatedAt");
+//            for (Item _item : page.getContent()) {
+//                final List<PriceHistory> pageHistory = this.priceHistoryRepository.findWithProductNoItem(
+//                        _item.getProduct().getCode(),
+//                        _item.getId(),
+//                        5);
+//
+//                if(pageHistory.isEmpty()){
+//                    _item.getProduct().setPriceHistories(Set.of());
+//                }else{
+//                    _item.getProduct().setPriceHistories(Set.of(pageHistory.toArray(new PriceHistory[0])));
+//                }
+//            }
+//
+//
+//
+//        }
 
         return this.itemMapper.pageItemToResponseList(page, params);
     }
