@@ -15,4 +15,5 @@ public class UnitDto implements Serializable {
     private String id;
     private String description;
     private String initials;
+    private boolean isIntegerType;
 }

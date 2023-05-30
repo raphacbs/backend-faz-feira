@@ -17,8 +17,12 @@ import java.util.UUID;
 public interface UnitMapper {
 
     UnitMapper INSTANCE = Mappers.getMapper(UnitMapper.class);
+
+
+    @Mapping(source = "integerType" , target = "isIntegerType")
     Unit unitDtoToUnit(UnitDto unitDto);
 
+    @Mapping(source = "integerType" , target = "isIntegerType")
     UnitDto unitToUnitDto(Unit unit);
 
     List<UnitDto> unitToUnitDto(List<Unit> unit);
