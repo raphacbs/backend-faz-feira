@@ -35,9 +35,9 @@ public interface ShoppingListMapper {
                             item.isAdded() ? item.getPrice() : 0).sum())
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-            int quantityPlannedProduct = items.stream().mapToInt(Item::getQuantity).sum();
+            double quantityPlannedProduct = items.stream().mapToDouble(Item::getQuantity).sum();
 
-            int quantityAddedProduct = items.stream().mapToInt(item -> item.isAdded() ? item.getQuantity() : 0).sum();
+            double quantityAddedProduct = items.stream().mapToDouble(item -> item.isAdded() ? item.getQuantity() : 0).sum();
 
             final ShoppingListDto.ItemsInfo itemsInfo = ShoppingListDto.ItemsInfo.builder()
                     .quantityPlannedProduct(quantityPlannedProduct)

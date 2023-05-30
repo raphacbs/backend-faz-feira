@@ -80,6 +80,7 @@ public class ShoppingListController {
 
         return ResponseEntity.ok(this.shoppingListService.getByParams(params));
     }
+
     @GetMapping(path = "/{id}")
     public ResponseEntity<ShoppingListDto> getById(@PathVariable("id") UUID id) {
         final Optional<ShoppingListDto> optionalProductDto = this.shoppingListService.getById(id);
@@ -109,14 +110,14 @@ public class ShoppingListController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = MessageExceptionHandler.class),
                                     examples = {
-                                            @ExampleObject(name = "200010",value = "{\"code\": 2000010, \"message\": \"Shopping list does not exist for this user\"}")
+                                            @ExampleObject(name = "200010", value = "{\"code\": 2000010, \"message\": \"Shopping list does not exist for this user\"}")
                                     }
                             ),
                     }
             )
     })
     @PostMapping
-    public ResponseEntity<ShoppingListDto> create(@RequestBody ShoppingListInput shoppingListInput){
+    public ResponseEntity<ShoppingListDto> create(@RequestBody ShoppingListInput shoppingListInput) {
         return new ResponseEntity<>(this.shoppingListService.create(shoppingListInput), HttpStatus.CREATED);
     }
 
@@ -141,14 +142,14 @@ public class ShoppingListController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = MessageExceptionHandler.class),
                                     examples = {
-                                            @ExampleObject(name = "300010",value = "{\"code\": 3000010, \"message\": \"Not found supermarket with Id\"}")
+                                            @ExampleObject(name = "300010", value = "{\"code\": 3000010, \"message\": \"Not found supermarket with Id\"}")
                                     }
                             ),
                     }
             )
     })
     @PutMapping
-    public ResponseEntity<ShoppingListDto> update(@RequestBody ShoppingListInput shoppingListInput){
+    public ResponseEntity<ShoppingListDto> update(@RequestBody ShoppingListInput shoppingListInput) {
         return new ResponseEntity<>(this.shoppingListService.update(shoppingListInput), HttpStatus.OK);
     }
 }

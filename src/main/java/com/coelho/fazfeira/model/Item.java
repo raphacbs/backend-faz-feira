@@ -23,7 +23,7 @@ public class Item {
     @Column
     private String note;
     @Column(nullable = false)
-    private Integer quantity;
+    private Double quantity;
     @Column(nullable = false)
     private Double price;
     @Column(nullable = false)
@@ -36,8 +36,17 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "shopping_list_id")
     private ShoppingList shoppingList;
+    @ManyToOne
+    @JoinColumn(name = "unit_id")
+    private Unit unit;
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at",nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
+
 }

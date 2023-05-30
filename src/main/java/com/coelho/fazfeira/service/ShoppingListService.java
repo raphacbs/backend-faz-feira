@@ -125,8 +125,8 @@ public class ShoppingListService implements Service<ShoppingListDto, ShoppingLis
                             item.isAdded() ? item.getPrice() : 0).sum())
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-            int quantityPlannedProduct = items.stream().mapToInt(Item::getQuantity).sum();
-            int quantityAddedProduct = items.stream().mapToInt(item -> item.isAdded() ? item.getQuantity() : 0).sum();
+            double quantityPlannedProduct = items.stream().mapToDouble(Item::getQuantity).sum();
+            double quantityAddedProduct = items.stream().mapToDouble(item -> item.isAdded() ? item.getQuantity() : 0).sum();
 
             itemsInfo.setPlannedTotalValue(plannedTotalValue);
             itemsInfo.setQuantityPlannedProduct(quantityPlannedProduct);

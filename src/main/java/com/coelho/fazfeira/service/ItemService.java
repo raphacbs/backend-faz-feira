@@ -60,9 +60,10 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
         item.setCreatedAt(LocalDateTime.now());
         item.setUpdatedAt(LocalDateTime.now());
         User user = User.builder().id(userService.getLoggedUserId()).build();
+
         final Optional<ShoppingList> shoppingListPage = this.shoppingListRepository
-                .findByIdAndUser(itemDto.getShoppingList().getId(),
-                        user);
+                .findByIdAndUser(itemDto.getShoppingList().getId(), user);
+
         if (shoppingListPage.isEmpty()) {
             logger.warn("Shopping list does not exist for this user");
             throw new BusinessException(BusinessCode.SHOPPING_LIST_NOT_EXIST_FOR_USER);
@@ -75,17 +76,15 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
         ShoppingList shoppingList = shoppingListPage.get();
         Product product = item.getProduct();
-        final Optional<Item> itemPage = this.itemRepository.findByShoppingListAndProduct(
-                shoppingList,
-                product);
+        final Optional<Item> itemPage = this.itemRepository.findByShoppingListAndProduct(shoppingList, product);
 
         PriceHistory priceHistory = null;
 
         if (itemPage.isPresent()) {
             Item itemSaved = itemPage.get();
-            final Integer quantity = itemSaved.getQuantity();
-            itemSaved.setQuantity(quantity + itemDto.getQuantity());
-            itemSaved.setPerUnit(itemDto.getPerUnit());
+
+            itemMapper.updateItemFromItemDto(itemDto, itemSaved);
+
             itemSaved.setUpdatedAt(LocalDateTime.now());
 
             double newPrice = BigDecimal.valueOf(itemSaved.getPerUnit() * itemSaved.getQuantity())
@@ -94,11 +93,8 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
             itemSaved.setPrice(newPrice);
             item = itemSaved;
 
-            Optional<PriceHistory> optionalPriceHistory = this.priceHistoryRepository.findByProductAndItemAndShoppingList(
-                    product,
-                    itemSaved,
-                    shoppingList);
-
+            Optional<PriceHistory> optionalPriceHistory = this.priceHistoryRepository
+                    .findByProductAndItemAndShoppingList(product, itemSaved, shoppingList);
 
             if (optionalPriceHistory.isPresent()) {
                 priceHistory = optionalPriceHistory.get();

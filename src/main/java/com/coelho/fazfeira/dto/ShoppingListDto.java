@@ -29,8 +29,8 @@ public class ShoppingListDto implements Serializable, Dto {
     @NoArgsConstructor
     @Builder
     public static class ItemsInfo {
-        private int quantityPlannedProduct;
-        private int quantityAddedProduct;
+        private double quantityPlannedProduct;
+        private double quantityAddedProduct;
         private double plannedTotalValue;
         private double totalValueAdded;
     }

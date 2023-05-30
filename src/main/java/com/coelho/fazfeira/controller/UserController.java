@@ -9,6 +9,8 @@ import com.coelho.fazfeira.excepitonhandler.UserNotAuthException;
 import com.coelho.fazfeira.excepitonhandler.UserNotFoundException;
 import com.coelho.fazfeira.model.User;
 import com.coelho.fazfeira.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("api/v1/user")
+@Tag(name = "User operations")
 public class UserController {
     private UserService userService;
 
@@ -58,6 +61,7 @@ public class UserController {
         }
     }
 
+    @Operation(description = "Do login with google")
     @GetMapping("/login/google")
     public ResponseEntity<UserInfo> loginUserGoogle(@RequestHeader("token") String token) throws UserNotAuthException {
        return ResponseEntity.status(HttpStatus.OK).body(userService.authGoogle(token));

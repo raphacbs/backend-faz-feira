@@ -70,4 +70,13 @@ public class PriceHistoryDto implements Serializable {
         private String address;
         private String placeId;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class PriceDifference implements Serializable {
+        private double diff;
+
+    }
 }

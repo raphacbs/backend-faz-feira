@@ -16,7 +16,7 @@ public class ItemDto implements Serializable {
     private UUID id;
     private String note;
     @NotNull(message = "quantity is mandatory")
-    private Integer quantity;
+    private Double quantity;
     @NotNull(message = "price is mandatory")
     private Double price;
     @NotNull(message = "perUnit is mandatory")
@@ -26,6 +26,7 @@ public class ItemDto implements Serializable {
     private ProductDto product;
     @NotNull(message = "Shopping List is mandatory")
     private ShoppingListDto shoppingList;
+    private UnitDto unit;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -16,13 +16,18 @@ public interface ItemMapper {
 
     ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Item itemDtoToItem(ItemDto itemDto);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "product.priceHistories", ignore = true)
     ItemDto itemToItemDto(Item item);
 
     List<ItemDto> itemToItemDto(List<Item> item);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "shoppingList", ignore = true)
+    @Mapping(target = "product", ignore = true)
     Item updateItemFromItemDto(ItemDto itemDto, @MappingTarget Item item);
 
     @ObjectFactory
