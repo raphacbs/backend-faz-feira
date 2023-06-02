@@ -26,7 +26,6 @@ public class UserController {
     private UserService userService;
 
 
-
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -34,12 +33,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> postUser(@RequestBody User user) {
-        try {
-            UserDto userDto = userService.save(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        }
+        UserDto userDto = userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
     }
 
     @PostMapping("/login")
@@ -50,11 +45,11 @@ public class UserController {
             }
             final Optional<TokenDto> tokenDtoOptional = this.userService.validate(user);
 
-           if(tokenDtoOptional.isPresent()){
-               return new ResponseEntity<>(tokenDtoOptional.get(), HttpStatus.OK);
-           }else{
-               return new ResponseEntity<>(new UserNotFoundException("error"), HttpStatus.UNAUTHORIZED);
-           }
+            if (tokenDtoOptional.isPresent()) {
+                return new ResponseEntity<>(tokenDtoOptional.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new UserNotFoundException("error"), HttpStatus.UNAUTHORIZED);
+            }
 
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
@@ -64,10 +59,11 @@ public class UserController {
     @Operation(description = "Do login with google")
     @GetMapping("/login/google")
     public ResponseEntity<UserInfo> loginUserGoogle(@RequestHeader("token") String token) throws UserNotAuthException {
-       return ResponseEntity.status(HttpStatus.OK).body(userService.authGoogle(token));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.authGoogle(token));
     }
+
     @GetMapping("/login/facebook")
     public ResponseEntity<UserInfo> loginUserFacebook(@RequestHeader("token") String token) throws UserNotAuthException {
-       return ResponseEntity.status(HttpStatus.OK).body(userService.authFacebook(token));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.authFacebook(token));
     }
 }

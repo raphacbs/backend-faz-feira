@@ -15,6 +15,7 @@ import com.coelho.fazfeira.model.*;
 import com.coelho.fazfeira.repository.ItemRepository;
 import com.coelho.fazfeira.repository.PriceHistoryRepository;
 import com.coelho.fazfeira.repository.ShoppingListRepository;
+import com.coelho.fazfeira.util.Converts;
 import com.coelho.fazfeira.validation.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.coelho.fazfeira.util.Converts.asString;
 import static com.coelho.fazfeira.util.Nullables.isNotNull;
 
 @org.springframework.stereotype.Service
@@ -137,13 +139,15 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
             throw new NotFoundException("Shopping list does not exist for this user");
         }
 
-        final Optional<Item> itemOptional = this.itemRepository.findById(itemDto.getId());
-        if (itemOptional.isEmpty()) {
-            logger.warn("Item does not exist");
+        final Item itemSaved = this.itemRepository.findById(itemDto.getId()).orElseThrow(()->{
             throw new NotFoundException("Item does not exist");
-        }
+        });
 
-        final Item item = this.itemMapper.updateItemFromItemDto(itemDto, itemOptional.get());
+        if(!asString(itemSaved.getUnit().getId()).equals(itemDto.getUnit().getId())){
+
+        }
+        final Item item = this.itemMapper.updateItemFromItemDto(itemDto, itemSaved);
+
 
         item.setUpdatedAt(LocalDateTime.now());
         double newPrice = BigDecimal.valueOf(item.getPerUnit() * item.getQuantity())

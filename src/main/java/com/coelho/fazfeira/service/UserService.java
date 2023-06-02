@@ -1,25 +1,30 @@
 package com.coelho.fazfeira.service;
 
+import com.coelho.fazfeira.base.BusinessCode;
 import com.coelho.fazfeira.config.JwtGenerator;
 import com.coelho.fazfeira.dto.TokenDto;
 import com.coelho.fazfeira.dto.UserDto;
 import com.coelho.fazfeira.dto.UserInfo;
 import com.coelho.fazfeira.dto.UserRequest;
+import com.coelho.fazfeira.excepitonhandler.BusinessException;
 import com.coelho.fazfeira.excepitonhandler.UserNotAuthException;
 import com.coelho.fazfeira.excepitonhandler.UserNotFoundException;
 import com.coelho.fazfeira.model.Role;
 import com.coelho.fazfeira.model.User;
 import com.coelho.fazfeira.repository.UserRepository;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintDeclarationException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -48,7 +53,7 @@ public class UserService {
 
     public UUID getLoggedUserId() {
         Map<String, String> map = (Map<String, String>) request.getAttribute("claims");
-        return UUID.fromString(Optional.ofNullable(map.get("sub")).orElseGet(()->map.get("id")));
+        return UUID.fromString(Optional.ofNullable(map.get("sub")).orElseGet(() -> map.get("id")));
     }
 
     public UserDto save(User user) {
@@ -56,26 +61,30 @@ public class UserService {
         user.setRole(Role.USER);
         user.setActive(true);
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-        user = userRepository.save(user);
-        return UserDto.builder()
-                .lastName(user.getLastName())
-                .firstName(user.getFirstName())
-                .id(user.getId())
-                .email(user.getEmail())
-                .build();
+        try {
+            user = userRepository.save(user);
+            return UserDto.builder()
+                    .lastName(user.getLastName())
+                    .firstName(user.getFirstName())
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .build();
+        } catch (DataIntegrityViolationException ex) {
+            throw new BusinessException(BusinessCode.USER_ALL_READY);
+        }
     }
 
     public Optional<TokenDto> validate(UserRequest userRequest) throws UserNotFoundException {
         final Optional<User> userOptional = userRepository.findByEmail(userRequest.getEmail());
 
         if (userOptional.isEmpty()) {
-            String message =  MessageFormat.format("The user '{0}' not found", userRequest.getEmail());
+            String message = MessageFormat.format("The user '{0}' not found", userRequest.getEmail());
             logger.error(message);
             throw new UserNotFoundException(message);
         }
 
         if (!userOptional.get().isActive()) {
-            String message =  MessageFormat.format("User '{0}' is not actived", userRequest.getEmail());
+            String message = MessageFormat.format("User '{0}' is not actived", userRequest.getEmail());
             logger.error(message);
             throw new UserNotFoundException(message);
         }
