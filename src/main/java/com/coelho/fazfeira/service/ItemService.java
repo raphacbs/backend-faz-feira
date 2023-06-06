@@ -100,6 +100,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
 
             itemSaved.setPrice(newPrice);
+            itemSaved.setAdded(true);
             item = itemSaved;
 
             Optional<PriceHistory> optionalPriceHistory = this.priceHistoryRepository
@@ -152,10 +153,19 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
             throw new NotFoundException("Item does not exist");
         });
 
-        if(!asString(itemSaved.getUnit().getId()).equals(itemDto.getUnit().getId())){
+        Unit unit = unitRepository.findById(UUID.fromString(itemDto.getUnit().getId())).orElseThrow(
+                ()-> new BusinessException(BusinessCode.UNIT_NOT_EXIST));
 
-        }
+
         final Item item = this.itemMapper.updateItemFromItemDto(itemDto, itemSaved);
+
+        item.setUnit(unit);
+
+        if(unit.isIntegerType()){
+            double roundedNumber = Math.round(item.getQuantity() < 0.5 ? item.getQuantity() + 0.5 : item.getQuantity());
+            item.setQuantity(roundedNumber);
+        }
+
 
 
         item.setUpdatedAt(LocalDateTime.now());
