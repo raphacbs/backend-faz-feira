@@ -35,9 +35,20 @@ public interface ShoppingListMapper {
                             item.isAdded() ? item.getPrice() : 0).sum())
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-            double quantityPlannedProduct = items.stream().mapToDouble(Item::getQuantity).sum();
+            double quantityPlannedProduct = items.stream()
+                    .mapToDouble(item -> item.getUnit().isIntegerType() ? item.getQuantity() :  1)
+                    .sum();
 
-            double quantityAddedProduct = items.stream().mapToDouble(item -> item.isAdded() ? item.getQuantity() : 0).sum();
+            double quantityAddedProduct = items.stream()
+                    .mapToDouble(item -> {
+                        if (item.isAdded()) {
+                            return item.getUnit().isIntegerType() ? item.getQuantity() : 1;
+                        } else {
+                            return 0;
+                        }
+                    })
+                    .sum();
+
 
             final ShoppingListDto.ItemsInfo itemsInfo = ShoppingListDto.ItemsInfo.builder()
                     .quantityPlannedProduct(quantityPlannedProduct)

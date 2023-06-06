@@ -15,6 +15,7 @@ import com.coelho.fazfeira.model.*;
 import com.coelho.fazfeira.repository.ItemRepository;
 import com.coelho.fazfeira.repository.PriceHistoryRepository;
 import com.coelho.fazfeira.repository.ShoppingListRepository;
+import com.coelho.fazfeira.repository.UnitRepository;
 import com.coelho.fazfeira.util.Converts;
 import com.coelho.fazfeira.validation.InputValidator;
 import org.slf4j.Logger;
@@ -41,6 +42,9 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
     @Autowired
     private ShoppingListRepository shoppingListRepository;
+
+    @Autowired
+    private UnitRepository unitRepository;
 
     ItemMapper itemMapper = ItemMapper.INSTANCE;
 
@@ -75,6 +79,9 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
             logger.warn("You cannot add items to lists with READY status.");
             throw new BusinessException(BusinessCode.SHOPPING_LIST_STATUS_NOT_ADD_ITEMS);
         }
+
+        Unit unit = unitRepository.findById(UUID.fromString(itemDto.getUnit().getId())).orElseThrow(
+                ()-> new BusinessException(BusinessCode.UNIT_NOT_EXIST));
 
         ShoppingList shoppingList = shoppingListPage.get();
         Product product = item.getProduct();
@@ -119,6 +126,8 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
                     .item(item)
                     .build();
         }
+
+        item.setUnit(unit);
 
         this.itemRepository.save(item);
         this.priceHistoryRepository.save(priceHistory);
