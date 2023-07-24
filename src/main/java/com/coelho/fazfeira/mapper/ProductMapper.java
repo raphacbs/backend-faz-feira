@@ -4,6 +4,7 @@ import com.coelho.fazfeira.dto.ProductCosmoDto;
 import com.coelho.fazfeira.dto.ProductDto;
 import com.coelho.fazfeira.dto.ProductRequest;
 import com.coelho.fazfeira.dto.ResponseList;
+import com.coelho.fazfeira.inputs.ProductInput;
 import com.coelho.fazfeira.model.Product;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -15,6 +16,8 @@ import java.util.UUID;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface ProductMapper {
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
+
+    Product productInputToProduct(ProductInput productInput);
 
     Product productDtoToProduct(ProductDto productDto);
     List<Product> productDtoToProduct(List<ProductDto> productDto);

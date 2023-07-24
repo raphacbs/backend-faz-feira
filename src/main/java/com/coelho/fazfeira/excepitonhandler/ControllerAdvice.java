@@ -94,6 +94,13 @@ public class ControllerAdvice {
                 shoppingListStatusException.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
+    @ResponseBody
+    @ExceptionHandler(ResourceValidationException.class)
+    public ResponseEntity<MessageExceptionHandler> shoopingListStatus(ResourceValidationException resourceValidationException) {
+        MessageExceptionHandler error = new MessageExceptionHandler(HttpStatus.BAD_REQUEST.value(),
+                resourceValidationException.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 
     @ResponseBody
     @ExceptionHandler(BusinessException.class)

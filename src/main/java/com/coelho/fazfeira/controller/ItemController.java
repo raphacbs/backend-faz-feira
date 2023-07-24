@@ -4,6 +4,7 @@ import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.dto.ItemDto;
 import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.excepitonhandler.MessageExceptionHandler;
+import com.coelho.fazfeira.inputs.ItemWithPorductInput;
 import com.coelho.fazfeira.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,6 +66,41 @@ public class ItemController {
     public ResponseEntity<ItemDto> register(@RequestBody ItemDto itemDto) {
         return new ResponseEntity<>(itemService.create(itemDto), HttpStatus.CREATED);
     }
+
+
+    @Operation(description = "Add a item and  product")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "item added",
+
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ItemDto.class)
+
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = MessageExceptionHandler.class),
+                                    examples = {
+                                            @ExampleObject(name = "200010",value = "{\"code\": 2000010, \"message\": \"Shopping list does not exist for this user\"}"),
+                                            @ExampleObject(name = "200020", value = "{\"code\": 200020, \"message\": \"You cannot add items to lists with READY status.\"}"),
+                                    }
+                            ),
+                    }
+            )
+
+    })
+    @PostMapping("/product")
+    public ResponseEntity<ItemDto> registerWithProduct(@RequestBody ItemWithPorductInput itemWithPorductInput) {
+        return new ResponseEntity<>(itemService.createWithProduct(itemWithPorductInput), HttpStatus.CREATED);
+    }
+
 
     @Operation(description = "Update a item")
     @ApiResponses(value = {

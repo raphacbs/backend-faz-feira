@@ -12,7 +12,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto implements Serializable {
+public class ItemDto implements Serializable, Dto {
     private UUID id;
     private String note;
     @NotNull(message = "quantity is mandatory")

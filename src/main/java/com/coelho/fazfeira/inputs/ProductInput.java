@@ -1,26 +1,28 @@
-package com.coelho.fazfeira.dto;
+package com.coelho.fazfeira.inputs;
 
+import com.coelho.fazfeira.dto.UnitDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto implements Serializable {
-    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
-            message = "product code with invalid format")
+public class ProductInput {
+    @NotNull(
+            message = "product code is required")
     private String code;
+    @NotNull(message = "description is required ")
     private String description;
     private String brand;
     private String thumbnail;
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
+    @Valid
     private UnitDto unit;
-    private List<PriceHistoryDto> priceHistories;
 }

@@ -7,9 +7,14 @@ import com.coelho.fazfeira.behavior.enums.EnumItemSearch;
 import com.coelho.fazfeira.constants.Params;
 import com.coelho.fazfeira.dto.ItemDto;
 import com.coelho.fazfeira.dto.ResponseList;
+import com.coelho.fazfeira.dto.ShoppingListDto;
 import com.coelho.fazfeira.excepitonhandler.BusinessException;
 import com.coelho.fazfeira.excepitonhandler.NotFoundException;
 import com.coelho.fazfeira.excepitonhandler.ShoppingListStatusException;
+import com.coelho.fazfeira.flow.item.CreateProductAndItemFlowBuilder;
+import com.coelho.fazfeira.handlers.DefaultContext;
+import com.coelho.fazfeira.inputs.ItemWithPorductInput;
+import com.coelho.fazfeira.inputs.ShoppingListInput;
 import com.coelho.fazfeira.mapper.ItemMapper;
 import com.coelho.fazfeira.model.*;
 import com.coelho.fazfeira.repository.ItemRepository;
@@ -22,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -59,6 +66,18 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
 
     @Autowired
     private  UserService userService;
+
+    @Autowired
+    private CreateProductAndItemFlowBuilder createProductAndItemFlowBuilder;
+
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ItemDto createWithProduct(ItemWithPorductInput obj) {
+        DefaultContext context = DefaultContext.builder().build();
+        context.setItemWithProductInput(obj);
+        createProductAndItemFlowBuilder.create(context).build().run();
+        return context.getItemDto();
+    }
 
     @Override
     public ItemDto create(ItemDto itemDto) {

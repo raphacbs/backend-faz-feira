@@ -2,6 +2,8 @@ package com.coelho.fazfeira.mapper;
 
 import com.coelho.fazfeira.dto.ItemDto;
 import com.coelho.fazfeira.dto.ResponseList;
+import com.coelho.fazfeira.inputs.ItemInput;
+import com.coelho.fazfeira.inputs.ItemWithPorductInput;
 import com.coelho.fazfeira.model.Item;
 import com.coelho.fazfeira.model.Unit;
 import org.mapstruct.*;
@@ -19,6 +21,12 @@ public interface ItemMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Item itemDtoToItem(ItemDto itemDto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Item itemInputToItem(ItemInput itemInput);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Item itemWithProductInputToItem(ItemWithPorductInput itemInput);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "product.priceHistories", ignore = true)
