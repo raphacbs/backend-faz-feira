@@ -23,7 +23,7 @@ public class ConvertItemWithProductInputToEntityProductHandler extends AbstractH
     @Override
     protected void doHandle(Context context) {
         final ItemWithPorductInput itemWithPorductInput = context.getInput(ITEM_INPUT, ItemWithPorductInput.class);
-        logger.debug("Preparing object conversion");
+        logger.debug("Preparing object {} conversion", itemWithPorductInput);
         final Product product = this.productMapper.productInputToProduct(itemWithPorductInput.getProduct());
         context.setEntity(PRODUCT, product);
         logger.info("Object converted successfully");

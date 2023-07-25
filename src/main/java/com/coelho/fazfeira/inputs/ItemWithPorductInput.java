@@ -19,7 +19,7 @@ public class ItemWithPorductInput implements Input{
     private String id;
     private String note;
     @NotNull(message = "quantity is mandatory")
-    private Integer quantity;
+    private Double quantity;
     @NotNull(message = "price is mandatory")
     private Double price;
     @NotNull(message = "perUnit is mandatory")

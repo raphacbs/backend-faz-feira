@@ -22,7 +22,7 @@ public class ConvertItemWithProductInputToEntityItemHandler extends AbstractHand
     @Override
     protected void doHandle(Context context) {
         final ItemWithPorductInput itemWithPorductInput = context.getInput(ITEM_INPUT, ItemWithPorductInput.class);
-        logger.debug("Preparing object conversion");
+        logger.debug("Preparing object {} conversion", itemWithPorductInput);
         final Item item = this.itemMapper.itemWithProductInputToItem(itemWithPorductInput);
         context.setEntity(ITEM, item);
         logger.info("Object converted successfully");
