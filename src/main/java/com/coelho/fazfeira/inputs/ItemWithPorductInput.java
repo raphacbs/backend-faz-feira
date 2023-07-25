@@ -4,6 +4,7 @@ import com.coelho.fazfeira.dto.ProductDto;
 import com.coelho.fazfeira.dto.ShoppingListDto;
 import com.coelho.fazfeira.dto.UnitDto;
 import com.coelho.fazfeira.validation.ValidUUID;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
@@ -24,6 +25,8 @@ public class ItemWithPorductInput implements Input{
     private Double price;
     @NotNull(message = "perUnit is mandatory")
     private Double perUnit;
+
+    @JsonProperty(value = "added")
     private boolean isAdded;
     @NotNull(message = "Product is mandatory")
     @Valid
