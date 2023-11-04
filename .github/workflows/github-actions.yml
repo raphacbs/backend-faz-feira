@@ -40,4 +40,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_SERVER_DIY_COMPANY }}
           script: |
             # Execute o script de implantação no servidor
-            /apps/deploys/faz-feira-dev/deploy.sh
+            /apps/deploys/faz-feira/deploy.sh
