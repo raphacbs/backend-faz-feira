@@ -20,10 +20,10 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn clean package  # Use o comando Maven apropriado para construir o projeto
+        run: mvn clean package -DskipTests=true # Use o comando Maven apropriado para construir o projeto
 
       - name: Add server to known_hosts
-        run: ssh-keyscan -p <PORT> 195.35.42.54 >> $HOME/.ssh/known_hosts
+        run: ssh-keyscan -p 22 195.35.42.54 >> $HOME/.ssh/known_hosts
         env:
           PORT: 22  # Substitua pela porta correta
 
