@@ -22,8 +22,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean package  # Use o comando Maven apropriado para construir o projeto
 
+      - name: Add server to known_hosts
+        run: ssh-keyscan -p <PORT> 195.35.42.54 >> $HOME/.ssh/known_hosts
+        env:
+          PORT: 22  # Substitua pela porta correta
+
       - name: Deploy to Server
         run: scp -P 22 target/app-faz-feira.jar root@195.35.42.54:/root/deploys/faz-feira-dev/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_SERVER_DIY_COMPANY }}
-
