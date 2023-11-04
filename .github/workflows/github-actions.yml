@@ -22,6 +22,6 @@ jobs:
         run: mvn clean package -DskipTests=true # Use o comando Maven apropriado para construir o projeto
 
       - name: Deploy to Server
-        run: scp -P 22 target/app-faz-feira.jar root@195.35.42.54:~/deploys/faz-feira-dev/
+        run: scp -v -P 22 target/app-faz-feira.jar root@195.35.42.54:~/deploys/faz-feira-dev/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_SERVER_DIY_COMPANY }}
