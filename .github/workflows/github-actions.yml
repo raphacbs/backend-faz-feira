@@ -1,9 +1,8 @@
 name: Build and Deploy
-
 on:
   push:
     branches:
-      - render  # Defina a branch desejada
+      - render
 
 jobs:
   build:
@@ -21,7 +20,14 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests=true # Use o comando Maven apropriado para construir o projeto
 
-      - name: Deploy to Server
-        run: scp -v -P 22 target/app-faz-feira.jar root@195.35.42.54:~/deploys/faz-feira-dev/
+      - name: Deploy to VPS
+        uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_SERVER_DIY_COMPANY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "target/app-faz-feira.jar"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+
