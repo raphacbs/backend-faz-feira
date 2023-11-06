@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UnitRepository extends JpaRepository<Unit, UUID> {
+
+    Page<Unit> findById(Pageable pageable,UUID id);
+
     Optional<Unit> findByDescriptionIgnoreCaseContaining(String description);
 
     Optional<Unit> findByInitialsIgnoreCaseContaining(String initials);

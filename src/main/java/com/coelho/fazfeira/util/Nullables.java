@@ -1,6 +1,9 @@
 package com.coelho.fazfeira.util;
 
 public class Nullables {
+    private Nullables(){
+        throw new IllegalStateException("Utility class");
+    }
     public static boolean isNullOrEmpty(String str){
         return str == null || str.isEmpty();
     }

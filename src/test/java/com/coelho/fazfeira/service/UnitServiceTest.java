@@ -1,31 +1,41 @@
 package com.coelho.fazfeira.service;
 
 import com.coelho.fazfeira.builder.UnitBuilder;
+import com.coelho.fazfeira.builder.UnitParamsBuilder;
 import com.coelho.fazfeira.builder.UnitRequestBodyBuilder;
+import com.coelho.fazfeira.dto.ResponseList;
 import com.coelho.fazfeira.dto.UnitDto;
 import com.coelho.fazfeira.dto.UnitRequestBody;
 import com.coelho.fazfeira.excepitonhandler.ResourceValidationException;
 import com.coelho.fazfeira.excepitonhandler.UnitAlreadyExistException;
-import com.coelho.fazfeira.excepitonhandler.UnitNotExistException;
+import com.coelho.fazfeira.excepitonhandler.EntityNotExistException;
 import com.coelho.fazfeira.model.Unit;
 import com.coelho.fazfeira.repository.UnitRepository;
 import com.coelho.fazfeira.validation.InputValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 
-public class UnitServiceTest {
+class UnitServiceTest {
     @InjectMocks
     private UnitService unitService;
 
@@ -66,19 +76,21 @@ public class UnitServiceTest {
     void givenValidUnitRequestBodyObject_whenSave_thenReturnSavedUnit() {
 
         when(unitRepository.save(any(Unit.class))).thenReturn(unitValid);
-        when(unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unitRequestBodyValid.getDescription(),
-                unitRequestBodyValid.getInitials()))
-                .thenReturn(List.of());
+        when(unitRepository.findByDescriptionIgnoreCaseContainingAndInitialsIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyValid.getDescription()),
+                eq(unitRequestBodyValid.getInitials())))
+                .thenReturn(new PageImpl<>(List.of()));
         final UnitDto saved = unitService.create(UnitRequestBodyBuilder.createValid());
         Assertions.assertNotNull(saved.getId());
     }
 
     @Test
     void givenUnitRequestBodyWithDescriptionAlreadyExist_whenSave_thenReturnException() {
-        when(unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unitRequestBodyDescriptionAlreadyExist.getDescription(),
-                unitRequestBodyDescriptionAlreadyExist.getInitials()))
-                .thenReturn(List.of(UnitBuilder
-                        .createFromUnitRequestBodyWithDescriptionEmpty(unitRequestBodyDescriptionAlreadyExist)));
+        when(unitRepository.findByDescriptionIgnoreCaseContainingAndInitialsIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyDescriptionAlreadyExist.getDescription()),
+                eq(unitRequestBodyDescriptionAlreadyExist.getInitials())))
+                .thenReturn(new PageImpl<>(List.of(UnitBuilder
+                        .createFromUnitRequestBodyWithDescriptionEmpty(unitRequestBodyDescriptionAlreadyExist))));
         Assertions.assertThrowsExactly(UnitAlreadyExistException.class,
                 () -> unitService.create(unitRequestBodyDescriptionAlreadyExist),
                 MessageFormat.format("Already exist unit description {0}",
@@ -88,10 +100,11 @@ public class UnitServiceTest {
     @Test
     void givenUnitRequestBodyWithInitialsAlreadyExist_whenSave_thenReturnException() {
         Mockito.mock(InputValidator.class);
-        when(unitRepository.findByDescriptionOrInitialsIgnoreCaseContaining(unitRequestBodyInitialsAlreadyExist.getDescription(),
-                unitRequestBodyInitialsAlreadyExist.getInitials()))
-                .thenReturn(List.of(UnitBuilder
-                        .createFromUnitRequestBodyWithInitialsEmpty(unitRequestBodyInitialsAlreadyExist)));
+        when(unitRepository.findByDescriptionIgnoreCaseContainingAndInitialsIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyInitialsAlreadyExist.getDescription()),
+                eq(unitRequestBodyInitialsAlreadyExist.getInitials())))
+                .thenReturn(new PageImpl<>(List.of(UnitBuilder
+                        .createFromUnitRequestBodyWithInitialsEmpty(unitRequestBodyInitialsAlreadyExist))));
 
         UnitAlreadyExistException unitAlreadyExistException = Assertions.assertThrows(UnitAlreadyExistException.class,
                 () -> unitService.create(unitRequestBodyInitialsAlreadyExist));
@@ -127,19 +140,114 @@ public class UnitServiceTest {
         final UnitDto saved = unitService.update(UnitRequestBodyBuilder.createValid());
         Assertions.assertNotNull(saved.getId());
     }
+
     @Test
     void givenUnitRequestBodyNotExist_whenUpdate_thenThrowException() {
-        String message = MessageFormat.format("The unit with the id: {0} not exist", unitRequestBodyNotExist.getId().toString());
+        String message = MessageFormat.format("The unit with the id: {0} not exist", unitRequestBodyNotExist.getId());
 
         when(unitRepository.findById(any()))
                 .thenReturn(Optional.empty());
 
-        UnitNotExistException unitNotExistException =
-                Assertions.assertThrows(UnitNotExistException.class,
+        EntityNotExistException entityNotExistException =
+                Assertions.assertThrows(EntityNotExistException.class,
                         () -> unitService.update(unitRequestBodyNotExist));
-        Assertions.assertTrue(unitNotExistException.getMessage().equalsIgnoreCase(message));
+        Assertions.assertTrue(entityNotExistException.getMessage().equalsIgnoreCase(message));
     }
 
-    //TODO CRIAR TESTE PARA COBRIR AS VARIAÇÕES DOS PARÂMETROS ENVIADOS NAS REQUISIÇÕES
+    @Test
+    void givenUnitRequestBody_whenGetByDescriptionAndInitialsAlready_thenReturnResponseListUnitDto() {
+        when(unitRepository.findByDescriptionIgnoreCaseContainingAndInitialsIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyDescriptionAlreadyExist.getDescription()),
+                eq(unitRequestBodyDescriptionAlreadyExist.getInitials())))
+                .thenReturn(new PageImpl<>(List.of(UnitBuilder
+                        .createFromUnitRequestBody(unitRequestBodyDescriptionAlreadyExist))));
+
+        final ResponseList<UnitDto> units = unitService.getByParams(UnitParamsBuilder
+                .builder()
+                .description(unitRequestBodyDescriptionAlreadyExist.getDescription())
+                .initials(unitRequestBodyDescriptionAlreadyExist.getInitials())
+                .build()
+                .create());
+
+        Assertions.assertTrue(units.getTotalElements() > 0);
+        Assertions.assertTrue(units.getItems().stream().anyMatch(x -> x.getDescription()
+                .equalsIgnoreCase(unitRequestBodyDescriptionAlreadyExist.getDescription())
+        ), "Not content searched unit");
+        Assertions.assertTrue(units.getItems().stream().anyMatch(x -> x.getInitials()
+                .equalsIgnoreCase(unitRequestBodyDescriptionAlreadyExist.getInitials())
+        ), "Not content searched unit");
+    }
+
+    @Test
+    void givenUnitRequestBody_whenGetByDescriptionAlready_thenReturnResponseListUnitDto() {
+        when(unitRepository.findByDescriptionIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyDescriptionAlreadyExist.getDescription())))
+                .thenReturn(new PageImpl<>(List.of(UnitBuilder
+                        .createFromUnitRequestBody(unitRequestBodyDescriptionAlreadyExist))));
+
+        final ResponseList<UnitDto> units = unitService.getByParams(UnitParamsBuilder
+                .builder()
+                .description(unitRequestBodyDescriptionAlreadyExist.getDescription())
+                .initials(null)
+                .build()
+                .create());
+
+        Assertions.assertTrue(units.getTotalElements() > 0);
+        Assertions.assertTrue(units.getItems().stream().anyMatch(x -> x.getDescription()
+                .equalsIgnoreCase(unitRequestBodyDescriptionAlreadyExist.getDescription())
+        ), "Not content searched unit");
+    }
+
+    @Test
+    void givenUnitRequestBody_whenGetByInitialsAlready_thenReturnResponseListUnitDto() {
+        when(unitRepository.findByInitialsIgnoreCaseContaining(any(Pageable.class),
+                eq(unitRequestBodyDescriptionAlreadyExist.getInitials())))
+                .thenReturn(new PageImpl<>(List.of(UnitBuilder
+                        .createFromUnitRequestBody(unitRequestBodyDescriptionAlreadyExist))));
+
+        final ResponseList<UnitDto> units = unitService.getByParams(UnitParamsBuilder
+                .builder()
+                .description(null)
+                .initials(unitRequestBodyDescriptionAlreadyExist.getInitials())
+                .build()
+                .create());
+
+        Assertions.assertTrue(units.getTotalElements() > 0);
+        Assertions.assertTrue(units.getItems().stream().anyMatch(x -> x.getInitials()
+                .equalsIgnoreCase(unitRequestBodyDescriptionAlreadyExist.getInitials())
+        ), "Not content searched unit");
+    }
+
+    @Test
+    void givenUnitRequestBody_whenGetAll_thenReturnResponseListUnitDto() {
+        when(unitRepository.findAll(any(Pageable.class)))
+                .thenReturn(new PageImpl<>(
+                        Collections.nCopies(10,
+                                UnitBuilder.createValid())
+                ));
+
+        final ResponseList<UnitDto> units = unitService.getByParams(UnitParamsBuilder
+                .builder()
+                .description(null)
+                .initials(null)
+                .build()
+                .create());
+
+        Assertions.assertEquals(10, units.getTotalElements());
+
+    }
+
+    @Test
+    void givenUnitId_whenGetById_thenReturnResponseListUnitDto() {
+        final Unit valid = UnitBuilder.createValid();
+        when(unitRepository.findById(any(UUID.class)))
+                .thenReturn(Optional.of(valid));
+
+        final Optional<UnitDto> unitDto = unitService.getById(valid.getId());
+
+        Assertions.assertTrue(unitDto.isPresent());
+
+    }
+
 
 }

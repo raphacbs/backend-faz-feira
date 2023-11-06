@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class MessageExceptionHandler {
-    private Integer status;
+    private Integer code;
     private String message;
 }
