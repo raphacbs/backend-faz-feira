@@ -60,7 +60,7 @@ jobs:
           port: ${{ secrets.REMOTE_PORT }}
           script: |
             CONTAINER_NAME="api-faz-feira"
-            IMAGE_NAME="openjdk:19"
+            IMAGE_NAME="api-faz-feira-img"
             NETWORK_NAME="bridge"
             DATABASE_HOST="postgresql://${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DATABASE_PORT }}/${{ secrets.REMOTE_DATABASE_NAME }}"
             DATABASE_USER="${{ secrets.REMOTE_DATABASE_USER }}"
@@ -73,8 +73,9 @@ jobs:
               echo "Parando e removendo o contêiner existente..."
               docker stop $CONTAINER_NAME
               docker rm $CONTAINER_NAME
+              sh apis/scripts/remove_image.sh -n $IMAGE_NAME
             else
               echo "Nenhum contêiner com o nome $CONTAINER_NAME encontrado."
             fi
-            docker build -t api-faz-feira-img ${{ secrets.REMOTE_TARGET }}
-            docker run -d --name $CONTAINER_NAME --network $NETWORK_NAME -p 8081:8081 -v $JAR_FILE_PATH:/app/app-faz-feira.jar -e DATABASE_HOST=$DATABASE_HOST -e DATABASE_USER=$DATABASE_USER -e DATABASE_PASSWORD=$DATABASE_PASSWORD -e X_API_PLACE_TOKEN=$X_API_PLACE_TOKEN -e TZ=$TZ -e X_COSMOS_TOKEN=$X_COSMOS_TOKEN -e server.port=8081 api-faz-feira-img
+            docker build -t $IMAGE_NAME ${{ secrets.REMOTE_TARGET }}
+            docker run -d --name $CONTAINER_NAME --network $NETWORK_NAME -p 8081:8081 -v $JAR_FILE_PATH:/app/app-faz-feira.jar -e DATABASE_HOST=$DATABASE_HOST -e DATABASE_USER=$DATABASE_USER -e DATABASE_PASSWORD=$DATABASE_PASSWORD -e X_API_PLACE_TOKEN=$X_API_PLACE_TOKEN -e TZ=$TZ -e X_COSMOS_TOKEN=$X_COSMOS_TOKEN -e server.port=8081 $IMAGE_NAME
