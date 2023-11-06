@@ -2,7 +2,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - render
+      - master
 
 jobs:
   build:
@@ -18,7 +18,18 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests=true # Use o comando Maven apropriado para construir o projeto
+        run: mvn clean package -DskipTests=true
+
+      - name: Run Tests
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
+      - name: Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Maven Tests
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
 
       - name: Deploy JAR to VPS
         uses: easingthemes/ssh-deploy@main
@@ -51,11 +62,11 @@ jobs:
             CONTAINER_NAME="api-faz-feira"
             IMAGE_NAME="openjdk:19"
             NETWORK_NAME="bridge"
-            DATABASE_HOST="postgresql://${{ secrets.REMOTE_HOST }}:5432/faz-feira-dev"
-            DATABASE_USER="postgres"
-            DATABASE_PASSWORD="password"
-            X_API_PLACE_TOKEN="f081221cb8b54a0d948712d9b9613184"
-            X_COSMOS_TOKEN=3NgVloi41ez-1ae_NMyPVA
+            DATABASE_HOST="postgresql://${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DATABASE_PORT }}/${{ secrets.REMOTE_DATABASE_NAME }}"
+            DATABASE_USER="${{ secrets.REMOTE_DATABASE_USER }}"
+            DATABASE_PASSWORD="${{ secrets.REMOTE_DATABASE_PASSWORD }}"
+            X_API_PLACE_TOKEN="${{ secrets.X_API_PLACE_TOKEN }}"
+            X_COSMOS_TOKEN=${{ secrets.X_COSMOS_TOKEN }}
             JAR_FILE_PATH="${{ secrets.REMOTE_TARGET }}/app-faz-feira.jar"
             TZ="America/Sao_Paulo"
             if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then
