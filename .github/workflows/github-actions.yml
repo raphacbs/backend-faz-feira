@@ -30,3 +30,19 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
 
+      - name: Run container
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_SERVER_DIY_COMPANY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            CONTAINER_NAME="api-faz-feira"
+            if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then
+              echo "Parando e removendo o contêiner existente..."
+              docker stop $CONTAINER_NAME
+              docker rm $CONTAINER_NAME
+            else
+              echo "Nenhum contêiner com o nome $CONTAINER_NAME encontrado."
+            fi
