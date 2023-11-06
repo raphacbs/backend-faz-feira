@@ -20,12 +20,22 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests=true # Use o comando Maven apropriado para construir o projeto
 
-      - name: Deploy to VPS
+      - name: Deploy JAR to VPS
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_SERVER_DIY_COMPANY }}
           ARGS: "-rlgoDzvc -i --delete"
           SOURCE: "target/app-faz-feira.jar"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+
+      - name: Deploy DOCKERFILE to VPS
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_SERVER_DIY_COMPANY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "Dockerfile"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
@@ -39,6 +49,15 @@ jobs:
           port: ${{ secrets.REMOTE_PORT }}
           script: |
             CONTAINER_NAME="api-faz-feira"
+            IMAGE_NAME="openjdk:19"
+            NETWORK_NAME="bridge"
+            DATABASE_HOST="postgresql://${{ secrets.REMOTE_HOST }}:5432/faz-feira-dev"
+            DATABASE_USER="postgres"
+            DATABASE_PASSWORD="password"
+            X_API_PLACE_TOKEN="f081221cb8b54a0d948712d9b9613184"
+            X_COSMOS_TOKEN=3NgVloi41ez-1ae_NMyPVA
+            JAR_FILE_PATH="${{ secrets.REMOTE_TARGET }}/app-faz-feira.jar"
+            TZ="America/Sao_Paulo"
             if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then
               echo "Parando e removendo o contêiner existente..."
               docker stop $CONTAINER_NAME
@@ -46,3 +65,5 @@ jobs:
             else
               echo "Nenhum contêiner com o nome $CONTAINER_NAME encontrado."
             fi
+            docker build -t api-faz-feira-img ${{ secrets.REMOTE_TARGET }}
+            docker run -d --name $CONTAINER_NAME --network $NETWORK_NAME -p 8081:8081 -v $JAR_FILE_PATH:/app/app-faz-feira.jar -e DATABASE_HOST=$DATABASE_HOST -e DATABASE_USER=$DATABASE_USER -e DATABASE_PASSWORD=$DATABASE_PASSWORD -e X_API_PLACE_TOKEN=$X_API_PLACE_TOKEN -e TZ=$TZ api-faz-feira-img

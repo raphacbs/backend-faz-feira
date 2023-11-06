@@ -1,4 +1,4 @@
-FROM openjdk:20
+FROM openjdk:19
 WORKDIR /app
 COPY /target/app-faz-feira.jar app-faz-feira.jar
 # ENV PORT=8080
