@@ -77,4 +77,4 @@ jobs:
               echo "Nenhum contêiner com o nome $CONTAINER_NAME encontrado."
             fi
             docker build -t api-faz-feira-img ${{ secrets.REMOTE_TARGET }}
-            docker run -d --name $CONTAINER_NAME --network $NETWORK_NAME -p 8081:8081 -v $JAR_FILE_PATH:/app/app-faz-feira.jar -e DATABASE_HOST=$DATABASE_HOST -e DATABASE_USER=$DATABASE_USER -e DATABASE_PASSWORD=$DATABASE_PASSWORD -e X_API_PLACE_TOKEN=$X_API_PLACE_TOKEN -e TZ=$TZ api-faz-feira-img
+            docker run -d --name $CONTAINER_NAME --network $NETWORK_NAME -p 8081:8081 -v $JAR_FILE_PATH:/app/app-faz-feira.jar -e DATABASE_HOST=$DATABASE_HOST -e DATABASE_USER=$DATABASE_USER -e DATABASE_PASSWORD=$DATABASE_PASSWORD -e X_API_PLACE_TOKEN=$X_API_PLACE_TOKEN -e TZ=$TZ -e X_COSMOS_TOKEN=$X_COSMOS_TOKEN -e server.port=8081 api-faz-feira-img
