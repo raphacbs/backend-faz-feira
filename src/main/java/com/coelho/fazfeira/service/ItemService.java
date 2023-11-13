@@ -99,7 +99,7 @@ public class ItemService implements Service<ItemDto, ItemDto>, Pageable {
             throw new BusinessException(BusinessCode.SHOPPING_LIST_STATUS_NOT_ADD_ITEMS);
         }
 
-        Unit unit = unitRepository.findById(UUID.fromString(itemDto.getUnit().getId())).orElseThrow(
+        Unit unit = unitRepository.findById(item.getUnit().getId()).orElseThrow(
                 ()-> new BusinessException(BusinessCode.UNIT_NOT_EXIST));
 
         ShoppingList shoppingList = shoppingListPage.get();
