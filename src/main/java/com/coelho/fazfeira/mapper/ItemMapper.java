@@ -2,6 +2,7 @@ package com.coelho.fazfeira.mapper;
 
 import com.coelho.fazfeira.dto.ItemDto;
 import com.coelho.fazfeira.dto.ResponseList;
+import com.coelho.fazfeira.dto.UnitDto;
 import com.coelho.fazfeira.inputs.ItemInput;
 import com.coelho.fazfeira.inputs.ItemWithPorductInput;
 import com.coelho.fazfeira.model.Item;
@@ -10,6 +11,10 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,7 +24,29 @@ public interface ItemMapper {
 
     ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
+    @NullToUnitDto
+    default Unit nullUnitDto(UnitDto unit) {
+        return unit == null ? defaultUnit() : Unit.builder()
+                .id(UUID.fromString(unit.getId()))
+                .build();
+    }
+
+    @Qualifier
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.CLASS)
+    @interface NullToUnitDto {
+
+    }
+
+    private Unit defaultUnit() {
+        return Unit.builder()
+                .id(UUID.fromString("3e7ec246-3e46-4c3b-b81e-1294b6643777"))
+                .build();
+    }
+
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "unit" , target = "unit", qualifiedBy = NullToUnitDto.class)
     Item itemDtoToItem(ItemDto itemDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

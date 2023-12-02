@@ -75,6 +75,7 @@ public class UserService {
     }
 
     public Optional<TokenDto> validate(UserRequest userRequest) throws UserNotFoundException {
+        logger.info("Login request by '{}'", userRequest.getEmail());
         final Optional<User> userOptional = userRepository.findByEmail(userRequest.getEmail());
 
         if (userOptional.isEmpty()) {
@@ -99,6 +100,8 @@ public class UserService {
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
                     .build();
+            logger.info("Login success by '{}'", userRequest.getEmail());
+
             return Optional.ofNullable(this.jwtGenerator.generateToken(userDto));
         } else {
             logger.error("Email or password is not valid");
